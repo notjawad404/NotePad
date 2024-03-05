@@ -1,16 +1,14 @@
-// userSlice.js
-
 import { createSlice } from '@reduxjs/toolkit';
 import { Tasks } from './components/Data';
 
-export const userSlice = createSlice({
+export const tasksSlice = createSlice({
   name: 'user',
   initialState: {
-    tasks: Tasks, // Assuming Tasks is an array of tasks
+    tasks: Tasks,
   },
   reducers: {
     // Define your reducers here if needed
   },
 });
 
-export default userSlice;
+export default tasksSlice;

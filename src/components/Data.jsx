@@ -16,5 +16,23 @@ export const Tasks = [
         title: 'Do homework',
         completed: false,
         Date: '2023-05-15'
+    },
+    {
+        id: 4,
+        title: 'Study for the test',
+        completed: false,
+        Date: '2023-05-15'
+    },
+    {
+        id: 5,
+        title: 'Clean the house',
+        completed: false,
+        Date: '2023-05-15'
+    },
+    {
+        id: 6,
+        title: 'Plan the weekend trip',
+        completed: false,
+        Date: '2023-05-15'
     }
 ]
