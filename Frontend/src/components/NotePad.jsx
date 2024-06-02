@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 export default function NotePad() {
   const [notes, setTask] = useState([]);
   const [editingTask, setEditingTask] = useState(null);
-  const [editFormData, setEditFormData] = useState({ name: '', description: '' });
+  const [editFormData, setEditFormData] = useState({ name: '', description: '', date: '', type: '', color: '', bgColor: ''});
 
   useEffect(() => {
     axios.get("http://localhost:5000/notes").then((response) => {
@@ -25,7 +25,7 @@ export default function NotePad() {
 
   const startEditingTask = (note) => {
     setEditingTask(note._id);
-    setEditFormData({ name: note.name, description: note.description });
+    setEditFormData({ name: note.name, description: note.description, date: note.date, type: note.type, color: note.color, bgColor: note.bgColor});
   };
 
   const handleEditChange = (e) => {
@@ -77,7 +77,7 @@ export default function NotePad() {
                 </div>
               </div>
               {editingTask === note._id && (
-                <div className="bg-white p-4 m-4 rounded shadow-md">
+                <div className="bg-white text-black p-4 m-4 rounded shadow-md">
                   <h2 className="text-xl font-bold mb-2">Edit Note</h2>
                   <input
                     type="text"
