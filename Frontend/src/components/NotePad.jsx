@@ -48,17 +48,17 @@ export default function NotePad() {
     <div className="bg-red-600 h-screen overflow-y-auto">
       <h1 className="text-white font-bold text-center py-4 text-3xl">NotePad</h1>
 
-      <div className="bg-green-400 w-3/4 m-auto px-4 py-2 rounded-xl">
+      <div className="w-3/4 m-auto px-4 py-2 rounded-xl">
       {notes.length === 0 ? (
         <div className="bg-green-400 w-3/4 m-auto px-4 py-2">
           <p className="text-lg text-center">No notes available</p>
         </div>
       ) : (
         notes.map((note, index) => (
-            <div key={index}  className="bg-white w-full mx-auto my-3 rounded-xl px-3">
+            <div key={index}  className={`${note.bgColor} ${note.color}  w-full mx-auto my-3 rounded-xl px-3`}>
               <div className="flex flex-row py-2">
                 <div className="w-4/5">
-                  <h3>{index + 1}{")"} <span className="text-lg font-semibold text-red-600">{note.name}</span></h3>
+                  <h3>{index + 1}{")"} <span className="text-lg font-semibold">{note.name}</span></h3>
                   <p>{note.description}</p>
                 </div>
                 <div className="flex flex-row">
