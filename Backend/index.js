@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const URL = 'mongodb+srv://jawad404:Jawad818@myhub.7k4rzfk.mongodb.net/?retryWrites=true&w=majority&appName=myhub';
+const URL = 'mongodb+srv://jawad404:Jawad818@myhub.7k4rzfk.mongodb.net/Notepad?retryWrites=true&w=majority&appName=myhub';
 
 mongoose.connect(URL, {
     useNewUrlParser: true,
@@ -29,7 +29,7 @@ const NotesSchema = new mongoose.Schema({
     bgColor: { type: String, required: true },
 });
 
-const Note = mongoose.model('Note', NotesSchema);
+const Note = mongoose.model('Notes', NotesSchema);
 
 app.post('/notes', async (req, res) => {
     try {
