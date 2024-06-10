@@ -106,6 +106,94 @@ app.put('/notes/:id', async (req, res) => {
     }
 });
 
+
+// Flash Cards
+
+const FlashCardSchema = new mongoose.Schema({
+    username: { type: String, required: true },
+    question: { type: String, required: true },
+    answer: { type: String, required: true },
+    date: { type: Date, required: true },
+    color: { type: String, required: true },
+    bgColor: { type: String, required: true },
+});
+
+const FlashCard = mongoose.model('FlashCards', FlashCardSchema);
+
+app.post('/flashcards', async (req, res) => {
+    try {
+        const {username, question, answer, date, color, bgColor } = req.body;
+        console.log("Request Body: ", req.body); 
+
+        // Validate that all required fields are present
+        if (!question || !answer || !date || !color || !bgColor) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
+        // Create a new note object
+        const flashCard = new FlashCard({
+            username,
+            question,
+            answer,
+            date: new Date(date),
+            color,
+            bgColor
+        });
+
+        // Save the note to the database
+        await flashCard.save();
+        res.status(201).json(flashCard);
+    } catch (error) {
+        console.error('Error saving note:', error);
+        res.status(500).json({ message: 'Error saving note', error: error.message });
+    }
+})
+
+app.get('/flashcards', async (req, res) => {
+    try {
+        const flashCards = await FlashCard.find();
+        res.status(200).json(flashCards);
+    } catch (error) {
+        console.error('Error getting flashcards:', error);
+        res.status(500).json({ message: 'Error getting flashcards', error: error.message });
+    }
+})
+
+app.delete('/flashcards/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const flashCard = await FlashCard.findById(id);
+        if (!flashCard) {
+            return res.status(404).json({ message: 'Flash Card not found' });
+        }
+        await FlashCard.findByIdAndDelete(id);
+        res.status(200).json({ message: 'Flash Card deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting flash card:', error);
+        res.status(500).json({ message: 'Error deleting flash card', error: error.message });
+    }
+})
+
+app.put('/flashcards/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { username, question, answer, date, color, bgColor } = req.body;
+        const flashCard = await FlashCard.findByIdAndUpdate
+            id,
+            { username, question, answer, date: new Date(date), color, bgColor },
+            { new: true } // This option returns the updated document
+        
+        if (!flashCard) {
+            return res.status(404).json({ message: 'Flash Card not found' });
+        }
+        res.status(200).json(flashCard);
+
+    } catch (error) {
+        console.error('Error updating flash card:', error);
+        res.status(500).json({ message: 'Error updating flash card', error: error.message });
+    }
+})
+
 app.listen(5000, () => {
     console.log('Server has started on port 5000!');
 });
