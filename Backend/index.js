@@ -21,6 +21,7 @@ mongoose.connect(URL, {
 
 // Notes Schema
 const NotesSchema = new mongoose.Schema({
+    username: { type: String, required: true },
     name: { type: String, required: true },
     type: { type: String, required: true },
     date: { type: Date, required: true },
@@ -33,8 +34,8 @@ const Note = mongoose.model('Notes', NotesSchema);
 
 app.post('/notes', async (req, res) => {
     try {
-        const { name, description, type, date, color, bgColor } = req.body;
-        console.log("Request Body: ", req.body); // Log request body for debugging
+        const {username, name, description, type, date, color, bgColor } = req.body;
+        console.log("Request Body: ", req.body); 
 
         // Validate that all required fields are present
         if (!name || !description || !type || !date || !color || !bgColor) {
@@ -43,10 +44,11 @@ app.post('/notes', async (req, res) => {
 
         // Create a new note object
         const note = new Note({
+            username,
             name,
             description,
             type,
-            date: new Date(date), // Ensure date is a valid Date object
+            date: new Date(date),
             color,
             bgColor
         });
@@ -88,10 +90,10 @@ app.delete('/notes/:id', async (req, res) => {
 app.put('/notes/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, description, type, date, color, bgColor } = req.body;
+        const { username, name, description, type, date, color, bgColor } = req.body;
         const note = await Note.findByIdAndUpdate(
             id,
-            { name, description, type, date: new Date(date), color, bgColor },
+            { username, name, description, type, date: new Date(date), color, bgColor },
             { new: true } // This option returns the updated document
         );
         if (!note) {

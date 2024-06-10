@@ -2,21 +2,22 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 export default function NotePad() {
-  const [notes, setTask] = useState([]);
-  const [editingTask, setEditingTask] = useState(null);
+  const [notes, setNotes] = useState([]);
+  const [editNotes, setEditTask] = useState(null);
   const [editFormData, setEditFormData] = useState({ name: '', description: '', date: '', type: '', color: '', bgColor: ''});
 
   useEffect(() => {
     axios.get("http://localhost:5000/notes").then((response) => {
-      console.log(response.data);
-      setTask(response.data);
+      const userNotes = response.data.filter(note => note.username === "user123");
+      console.log(userNotes);
+      setNotes(userNotes);
     });
   }, []);
 
   const deleteTask = async (id) => {
     try {
       await axios.delete(`http://localhost:5000/notes/${id}`);
-      setTask(notes.filter(note => note._id !== id));
+      setNotes(notes.filter(note => note._id !== id));
       console.log("Note deleted successfully");
     } catch (error) {
       console.log(error);
@@ -24,7 +25,7 @@ export default function NotePad() {
   };
 
   const startEditingTask = (note) => {
-    setEditingTask(note._id);
+    setEditTask(note._id);
     setEditFormData({ name: note.name, description: note.description, date: note.date, type: note.type, color: note.color, bgColor: note.bgColor});
   };
 
@@ -36,8 +37,8 @@ export default function NotePad() {
   const submitEditTask = async (id) => {
     try {
       const response = await axios.put(`http://localhost:5000/notes/${id}`, editFormData);
-      setTask(notes.map(note => (note._id === id ? response.data : note)));
-      setEditingTask(null);
+      setNotes(notes.map(note => (note._id === id ? response.data : note)));
+      setEditTask(null);
       console.log("Note updated successfully");
     } catch (error) {
       console.log(error);
@@ -59,24 +60,32 @@ export default function NotePad() {
               <div className="flex flex-row py-2">
                 <div className="w-4/5">
                   <h3>{index + 1}{")"} <span className="text-lg font-semibold">{note.name}</span></h3>
-                  <p>{note.description}</p>
+                  {/* <p>{note.description}</p> */}
+
+                  <textarea
+                    name="description"
+                    value={note.description}
+                    disabled
+                    className="block w-full p-2 mb-2 border rounded"
+                    placeholder="Note Description"
+                  ></textarea>
                 </div>
-                <div className="flex flex-row">
+                <div className="flex flex-col m-auto">
                   <button
-                    className="bg-red-600 text-white p-2 mx-2 rounded-full w-20 h-10"
+                    className="bg-red-600 text-white p-2 m-2 rounded-full w-20 h-10"
                     onClick={() => startEditingTask(note)}
                   >
                     Edit
                   </button>
                   <button
-                    className="bg-red-600 text-white p-2 mx-2 lg:my-0 my-1 rounded-full w-20 h-10"
+                    className="bg-red-600 text-white p-2 m-2 lg:my-0 my-1 rounded-full w-20 h-10"
                     onClick={() => deleteTask(note._id)}
                   >
                     Delete
                   </button>
                 </div>
               </div>
-              {editingTask === note._id && (
+              {editNotes === note._id && (
                 <div className="bg-white text-black p-4 m-4 rounded shadow-md">
                   <h2 className="text-xl font-bold mb-2">Edit Note</h2>
                   <input
@@ -102,7 +111,7 @@ export default function NotePad() {
                   </button>
                   <button
                     className="bg-red-600 text-white p-2 rounded ml-2"
-                    onClick={() => setEditingTask(null)}
+                    onClick={() => setEditTask(null)}
                   >
                     Cancel
                   </button>

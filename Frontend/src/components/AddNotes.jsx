@@ -24,6 +24,7 @@ export default function AddNotes() {
 
         try {
             const response = await axios.post("http://localhost:5000/notes", {
+                username: "user123",
                 name: noteName,
                 description: noteDescription,
                 type: noteCategory,
