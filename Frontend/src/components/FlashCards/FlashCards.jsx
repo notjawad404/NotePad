@@ -7,18 +7,19 @@ export default function FlashCards() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    const fetchFlashCards = async () => {
+        try {
+            const response = await axios.get("http://localhost:5000/flashcards");
+            setFlashcards(response.data);
+            setLoading(false);
+        } catch (error) {
+            console.log(error);
+            setError("Failed to fetch flashcards.");
+            setLoading(false);
+        }
+    };
     useEffect(() => {
-        const fetchFlashCards = async () => {
-            try {
-                const response = await axios.get("http://localhost:5000/flashcards");
-                setFlashcards(response.data);
-                setLoading(false);
-            } catch (error) {
-                console.log(error);
-                setError("Failed to fetch flashcards.");
-                setLoading(false);
-            }
-        };
+        
         fetchFlashCards();
     }, []);
 
@@ -26,6 +27,7 @@ export default function FlashCards() {
         try {
             await axios.delete(`http://localhost:5000/flashcards/${id}`);
             setFlashcards(flashcards.filter(card => card.id !== id));
+            fetchFlashCards();
         } catch (error) {
             console.log(error);
             setError("Failed to delete flashcard."+ error.message);
@@ -58,7 +60,7 @@ export default function FlashCards() {
                                     </div>
                                 </div>
                                 <button
-                                    onClick={() => deleteFlashCard(card.id)}
+                                    onClick={() => deleteFlashCard(card._id)}
                                     className="mt-4 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
                                 >
                                     Delete
