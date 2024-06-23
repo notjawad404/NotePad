@@ -172,27 +172,7 @@ app.delete('/flashcards/:id', async (req, res) => {
         console.error('Error deleting flash card:', error);
         res.status(500).json({ message: 'Error deleting flash card', error: error.message });
     }
-})
-
-app.put('/flashcards/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { username, question, answer, date, color, bgColor } = req.body;
-        const flashCard = await FlashCard.findByIdAndUpdate
-            id,
-            { username, question, answer, date: new Date(date), color, bgColor },
-            { new: true } // This option returns the updated document
-        
-        if (!flashCard) {
-            return res.status(404).json({ message: 'Flash Card not found' });
-        }
-        res.status(200).json(flashCard);
-
-    } catch (error) {
-        console.error('Error updating flash card:', error);
-        res.status(500).json({ message: 'Error updating flash card', error: error.message });
-    }
-})
+}) 
 
 app.listen(5000, () => {
     console.log('Server has started on port 5000!');

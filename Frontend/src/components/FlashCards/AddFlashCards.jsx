@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import Navbar from "../common/Navbar";
 
 export default function AddFlashCards() {
     const [cardQuestion, setCardQuestion] = useState(""); 
@@ -52,7 +53,9 @@ export default function AddFlashCards() {
     ];
 
     return (
+
         <div className="h-screen overflow-y-auto bg-red-600 text-white">
+            <Navbar/>
             <div className="flex justify-center flex-col mt-10">
                 <h1 className="text-center font-bold text-3xl">Add Flash Card</h1>
                 <label htmlFor="cardQuestion" className="w-1/2 m-auto text-lg text-white">

@@ -1,35 +1,73 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import Navbar from "../common/Navbar";
 
 export default function FlashCards() {
-    const [cards , setCards] = useState([]);
-    const [flippedCard, setFlippedCard] = useState(null);
+    const [flashcards, setFlashcards] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     useEffect(() => {
-        axios.get("http://localhost:5000/flashcards").then((response) => {
-            const userCards = response.data.filter(card => card.username === "user123");
-            setCards(userCards);
-        });
+        const fetchFlashCards = async () => {
+            try {
+                const response = await axios.get("http://localhost:5000/flashcards");
+                setFlashcards(response.data);
+                setLoading(false);
+            } catch (error) {
+                console.log(error);
+                setError("Failed to fetch flashcards.");
+                setLoading(false);
+            }
+        };
+        fetchFlashCards();
     }, []);
 
-    const handleCardClick = (index) => {
-        setFlippedCard(index === flippedCard ? null : index);
+    const deleteFlashCard = async (id) => {
+        try {
+            await axios.delete(`http://localhost:5000/flashcards/${id}`);
+            setFlashcards(flashcards.filter(card => card.id !== id));
+        } catch (error) {
+            console.log(error);
+            setError("Failed to delete flashcard."+ error.message);
+
+        }
     };
 
     return (
-        <div className="flex flex-wrap justify-center">
-            {cards.map((card, index) => (
-                <div key={index} className="relative w-64 h-40 bg-white shadow-md rounded-lg m-4 cursor-pointer" onClick={() => handleCardClick(index)}>
-                    <div className={`absolute inset-0 flex items-center justify-center transform ${flippedCard === index ? 'rotate-y-180' : ''} transition-transform duration-500`}>
-                        <div className="absolute inset-0 bg-white w-full h-full backface-hidden rounded-lg">
-                            <h1 className="text-xl font-bold">{card.question}</h1>
-                        </div>
-                        <div className="absolute inset-0 bg-white w-full h-full backface-hidden rounded-lg">
-                            <p className="text-lg">{card.answer}</p>
-                        </div>
+        <div className="h-screen overflow-y-auto bg-blue-600 text-white">
+            <Navbar />
+            <div className="flex justify-center flex-col mt-10">
+                <h1 className="text-center font-bold text-3xl mb-6">Flash Cards</h1>
+                {loading ? (
+                    <div className="text-center text-xl">Loading...</div>
+                ) : error ? (
+                    <div className="text-center text-red-500 text-xl">{error}</div>
+                ) : (
+                    <div className="flex flex-wrap justify-center">
+                        {flashcards.map((card, index) => (
+                            <div
+                                key={index}
+                                className={`group w-1/4 m-4 p-6 rounded-xl shadow-lg transition-transform transform hover:scale-105 cursor-pointer ${card.bgColor} ${card.color}`}
+                            >
+                                <div className="relative h-40">
+                                    <div className="absolute inset-0 flex items-center justify-center text-lg font-semibold transition-opacity duration-300 opacity-100 group-hover:opacity-0">
+                                        {card.question}
+                                    </div>
+                                    <div className="absolute inset-0 flex items-center justify-center text-lg font-semibold transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+                                        {card.answer}
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => deleteFlashCard(card.id)}
+                                    className="mt-4 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        ))}
                     </div>
-                </div>
-            ))}
+                )}
+            </div>
         </div>
     );
 }

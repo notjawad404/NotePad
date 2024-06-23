@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Navbar from "./common/Navbar";
 
 export default function NotePad() {
   const [notes, setNotes] = useState([]);
@@ -47,6 +48,7 @@ export default function NotePad() {
 
   return (
     <div className="bg-red-600 h-screen overflow-y-auto">
+    <Navbar/>
       <h1 className="text-white font-bold text-center py-4 text-3xl">NotePad</h1>
 
       <div className="w-3/4 m-auto px-4 py-2 rounded-xl">
