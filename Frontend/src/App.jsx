@@ -18,6 +18,7 @@ function App() {
         <Route path="/addnotes" element={<AddNotes/>} />
         <Route path="/addflashcards" element={<AddFlashCards/>} />
         <Route path="/flashcards" element={<FlashCards/>} />
+
       </Routes>
     </Router>
    </div>
