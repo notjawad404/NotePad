@@ -1,14 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+require('dotenv').config();
+
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const URL = 'mongodb+srv://jawad404:Jawad818@myhub.7k4rzfk.mongodb.net/Notepad?retryWrites=true&w=majority&appName=myhub';
-
-mongoose.connect(URL, {
+mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
@@ -174,6 +175,6 @@ app.delete('/flashcards/:id', async (req, res) => {
     }
 }) 
 
-app.listen(5000, () => {
-    console.log('Server has started on port 5000!');
+app.listen(process.env.PORT, () => {
+    console.log('Server has started on port', process.env.PORT);
 });
