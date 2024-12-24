@@ -20,6 +20,10 @@ mongoose.connect(process.env.MONGO_URI, {
     console.log("Error Connecting to MongoDB: ", error.message);
 });
 
+app.get('/', (req, res) => {
+    res.send('Database conneted');
+});
+
 // Notes Schema
 const NotesSchema = new mongoose.Schema({
     username: { type: String, required: true },
