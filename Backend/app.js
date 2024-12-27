@@ -4,6 +4,7 @@ const connectDB = require('./config/db');
 require('dotenv').config();
 
 const noteRoutes = require('./routes/noteRoutes');
+const flashCardRoutes = require('./routes/flashCardRoutes');
 
 const app = express();
 
@@ -18,6 +19,9 @@ connectDB();
 app.get('/', (req, res) => {
     res.send('Connected to backend server');
 });
+
+
 app.use('/notes', noteRoutes);
+app.use('/flashcards', flashCardRoutes);
 
 module.exports = app;
