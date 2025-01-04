@@ -10,19 +10,19 @@ const initialState = {
 
 // Fetch all notes
 export const fetchNotes = createAsyncThunk("notes/fetchNotes", async () => {
-  const response = await axios.get("http://localhost:5000/notes");
+  const response = await axios.get("https://note-pad-beryl.vercel.app/notes");
   return response.data.filter((note) => note.username === "user123");
 });
 
 // Fetch a single note by ID
 export const fetchNoteById = createAsyncThunk("notes/fetchNoteById", async (id) => {
-  const response = await axios.get(`http://localhost:5000/notes/${id}`);
+  const response = await axios.get(`https://note-pad-beryl.vercel.app/notes/${id}`);
   return response.data;
 });
 
 // Delete a note
 export const deleteNote = createAsyncThunk("notes/deleteNote", async (id) => {
-  await axios.delete(`http://localhost:5000/notes/${id}`);
+  await axios.delete(`https://note-pad-beryl.vercel.app/notes/${id}`);
   return id;
 });
 
@@ -30,7 +30,7 @@ export const deleteNote = createAsyncThunk("notes/deleteNote", async (id) => {
 export const updateNote = createAsyncThunk(
   "notes/updateNote",
   async ({ id, data }) => {
-    const response = await axios.put(`http://localhost:5000/notes/${id}`, data);
+    const response = await axios.put(`https://note-pad-beryl.vercel.app/notes/${id}`, data);
     return response.data;
   }
 );
