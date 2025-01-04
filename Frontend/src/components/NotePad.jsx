@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchNotes, deleteNote, updateNote } from '../redux/noteSlice';
+import { fetchNotes, deleteNote } from '../redux/noteSlice';
+import { Link } from 'react-router-dom';
 import Navbar from './common/Navbar';
 
 const colorOptions = [
@@ -15,8 +16,6 @@ export default function NotePad() {
   const dispatch = useDispatch();
   const notes = useSelector((state) => state.notes.notes);
 
-  const [editNotes, setEditTask] = useState(null);
-  const [editFormData, setEditFormData] = useState({});
   const [searchName, setSearchName] = useState('');
   const [searchCategory, setSearchCategory] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
@@ -24,16 +23,6 @@ export default function NotePad() {
   useEffect(() => {
     dispatch(fetchNotes());
   }, [dispatch]);
-
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setEditFormData({ ...editFormData, [name]: value });
-  };
-
-  const submitEditTask = (id) => {
-    dispatch(updateNote({ id, data: editFormData }));
-    setEditTask(null);
-  };
 
   const filteredNotes = notes.filter(
     (note) =>
@@ -90,17 +79,14 @@ export default function NotePad() {
               className={`${note.bgColor} ${note.color} p-4 rounded-lg mb-4`}
             >
               <h3 className="text-xl font-bold">{note.name}</h3>
-              <p className="mb-4">{note.description}</p>
+              <p className="mb-4">{note.description.split('\n')[0]}</p>
               <div className="flex gap-4">
-                <button
-                  className="bg-blue-600 px-4 py-2 rounded-lg"
-                  onClick={() => {
-                    setEditTask(note._id);
-                    setEditFormData(note);
-                  }}
+                <Link
+                  to={`/note/${note._id}`}
+                  className="text-blue-400 underline"
                 >
-                  Edit
-                </button>
+                  Show More
+                </Link>
                 <button
                   className="bg-red-600 px-4 py-2 rounded-lg"
                   onClick={() => dispatch(deleteNote(note._id))}
@@ -108,39 +94,6 @@ export default function NotePad() {
                   Delete
                 </button>
               </div>
-              {editNotes === note._id && (
-                <div className="mt-4 bg-gray-800 p-4 rounded-lg">
-                  <input
-                    type="text"
-                    name="name"
-                    value={editFormData.name}
-                    onChange={handleEditChange}
-                    className="w-full p-2 mb-4 bg-gray-700 rounded-lg"
-                    placeholder="Name"
-                  />
-                  <textarea
-                    name="description"
-                    value={editFormData.description}
-                    onChange={handleEditChange}
-                    className="w-full p-2 bg-gray-700 rounded-lg"
-                    placeholder="Description"
-                  ></textarea>
-                  <div className="mt-4 flex gap-4">
-                    <button
-                      className="bg-green-600 px-4 py-2 rounded-lg"
-                      onClick={() => submitEditTask(note._id)}
-                    >
-                      Save
-                    </button>
-                    <button
-                      className="bg-gray-600 px-4 py-2 rounded-lg"
-                      onClick={() => setEditTask(null)}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           ))
         )}
