@@ -20,6 +20,16 @@ export const fetchNoteById = createAsyncThunk("notes/fetchNoteById", async (id) 
   return response.data;
 });
 
+// Add a new note
+export const addNote = createAsyncThunk("notes/addNote", async (noteData, { rejectWithValue }) => {
+  try {
+    const response = await axios.post("https://note-pad-beryl.vercel.app/notes", noteData);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.response.data || "Failed to add note.");
+  }
+});
+
 // Delete a note
 export const deleteNote = createAsyncThunk("notes/deleteNote", async (id) => {
   await axios.delete(`https://note-pad-beryl.vercel.app/notes/${id}`);
@@ -59,6 +69,21 @@ const noteSlice = createSlice({
         state.selectedNote = action.payload;
       })
 
+      // Add a note
+      .addCase(addNote.pending, (state) => {
+        state.status = "loading";
+        state.successMessage = null;
+        state.error = null;
+      })
+      .addCase(addNote.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.notes.push(action.payload);
+        state.successMessage = "Note added successfully!";
+      })
+      .addCase(addNote.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload || "Failed to add note.";
+      })
       // Delete note
       .addCase(deleteNote.fulfilled, (state, action) => {
         state.notes = state.notes.filter((note) => note._id !== action.payload);
