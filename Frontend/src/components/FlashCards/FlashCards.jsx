@@ -18,7 +18,7 @@ export default function FlashCards() {
   };
 
   return (
-    <div className="h-screen overflow-y-auto bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+    <div className="h-screen overflow-y-auto bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white">
       <Navbar />
       <div className="flex justify-center flex-col mt-10">
         <h1 className="text-center font-bold text-4xl mb-6">Flash Cards</h1>
