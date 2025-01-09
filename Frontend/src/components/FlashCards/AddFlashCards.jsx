@@ -7,8 +7,8 @@ export default function AddFlashCards() {
     const dispatch = useDispatch();
     const [cardQuestion, setCardQuestion] = useState(""); 
     const [cardAnswer, setCardAnswer] = useState("");
-    const [bgColor, setBgColor] = useState("white");
-    const [color, setColor] = useState("black");
+    const [bgColor, setBgColor] = useState("bg-white");
+    const [color, setColor] = useState("text-black");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -31,9 +31,7 @@ export default function AddFlashCards() {
             date: new Date().toISOString(), 
             bgColor, 
             color 
-        }   
-
-
+        };
 
         try {
             await dispatch(addFlashCard(newFlashCard));
@@ -58,55 +56,61 @@ export default function AddFlashCards() {
     ];
 
     return (
-        <div className="h-screen overflow-y-auto bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white">
+        <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white">
             <Navbar />
-            <div className="flex justify-center flex-col mt-10">
-                <h1 className="text-center font-bold text-4xl mb-6">Add Flash Card</h1>
-                <label htmlFor="cardQuestion" className="w-1/2 m-auto text-lg text-white">
-                    Card Question
-                </label>
-                <input 
-                    id="cardQuestion"
-                    type="text" 
-                    placeholder="Card Question" 
-                    value={cardQuestion} 
-                    onChange={(e) => setCardQuestion(e.target.value)}
-                    className="w-1/2 m-auto rounded-xl my-4 p-4 text-lg text-black"
-                />
-
-                <label htmlFor="cardAnswer" className="w-1/2 m-auto text-lg text-white">
-                    Card Answer
-                </label>
-                <textarea 
-                    id="cardAnswer"
-                    placeholder="Card Answer" 
-                    value={cardAnswer} 
-                    onChange={(e) => setCardAnswer(e.target.value)}
-                    className="w-1/2 m-auto rounded-xl my-4 p-4 text-lg text-black"
-                />
-
-                <div className="colorButtons w-1/2 m-auto flex justify-around my-4">
-                    {colorOptions.map((option, index) => (
-                        <button 
-                            key={index}
-                            onClick={() => { setBgColor(option.bgColor); setColor(option.color); }}
-                            className={`${option.bgColor} ${option.color} p-2 rounded-full w-10 h-10`}
-                            aria-label={`Set background color to ${option.bgColor} and text color to ${option.color}`}
+            <div className="max-w-4xl mx-auto px-4 py-8">
+                <h1 className="text-center text-4xl font-bold mb-8">Add Flash Card</h1>
+                <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <div className="mb-4">
+                        <label htmlFor="cardQuestion" className="block text-lg font-medium mb-2">Card Question</label>
+                        <input 
+                            id="cardQuestion"
+                            type="text" 
+                            placeholder="Enter card question" 
+                            value={cardQuestion} 
+                            onChange={(e) => setCardQuestion(e.target.value)}
+                            className="w-full p-3 bg-gray-700 rounded-lg text-gray-200 focus:outline-none focus:ring focus:ring-blue-500"
                         />
-                    ))}
-                </div>
+                    </div>
 
-                {error && <div className="w-1/2 mx-auto text-red-500 text-xl bg-white rounded-full p-2 my-2">{error}</div>}
-                {success && <div className="w-1/2 mx-auto text-green-500 text-xl bg-white rounded-full p-2 my-2">{success}</div>}
-                
-                <button 
-                    type="button" 
-                    onClick={handleAddCards} 
-                    className="w-1/5 m-auto bg-green-400 text-black text-lg p-2 font-semibold rounded-full hover:bg-black hover:text-green-400"
-                    disabled={loading}
-                >
-                    {loading ? "Adding..." : "Add Flash Card"}
-                </button>
+                    <div className="mb-4">
+                        <label htmlFor="cardAnswer" className="block text-lg font-medium mb-2">Card Answer</label>
+                        <textarea 
+                            id="cardAnswer"
+                            placeholder="Enter card answer" 
+                            value={cardAnswer} 
+                            onChange={(e) => setCardAnswer(e.target.value)}
+                            className="w-full p-3 bg-gray-700 rounded-lg text-gray-200 focus:outline-none focus:ring focus:ring-blue-500"
+                            rows="4"
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-lg font-medium mb-2">Choose Color</label>
+                        <div className="flex gap-3">
+                            {colorOptions.map((option, index) => (
+                                <button 
+                                    key={index}
+                                    onClick={() => { setBgColor(option.bgColor); setColor(option.color); }}
+                                    className={`w-10 h-10 rounded-full ${option.bgColor} ${option.color} focus:outline-none`}
+                                    aria-label={`Set background color to ${option.bgColor} and text color to ${option.color}`}
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+                    {error && <p className="text-red-500 bg-gray-900 p-3 rounded-lg mb-4">{error}</p>}
+                    {success && <p className="text-green-500 bg-gray-900 p-3 rounded-lg mb-4">{success}</p>}
+
+                    <button 
+                        type="button" 
+                        onClick={handleAddCards} 
+                        className={`w-full py-3 bg-green-500 text-lg font-bold rounded-lg hover:bg-green-600 focus:outline-none ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+                        disabled={loading}
+                    >
+                        {loading ? "Adding Flash Card..." : "Add Flash Card"}
+                    </button>
+                </div>
             </div>
         </div>
     );
