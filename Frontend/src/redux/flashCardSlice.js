@@ -80,11 +80,8 @@ const flashCardSlice = createSlice({
                 state.error = action.payload;
             })
             .addCase(deleteFlashCard.fulfilled, (state, action) => {
-                state.flashcards = state.flashcards.filter(card => card.id !== action.payload);
+                state.flashcards = state.flashcards.filter(card => card._id !== action.payload);
                 state.successMessage = "Flashcard deleted successfully.";
-            })
-            .addCase(deleteFlashCard.pending, (state) => {
-                state.status = "loading";
             })
             .addCase(deleteFlashCard.rejected, (state, action) => {
                 state.status = "failed";
