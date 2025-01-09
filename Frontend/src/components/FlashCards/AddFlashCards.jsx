@@ -1,9 +1,14 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addFlashCard } from "../../redux/flashCardSlice";
 import Navbar from "../common/Navbar";
 
+
+
+
 export default function AddFlashCards() {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const [cardQuestion, setCardQuestion] = useState(""); 
     const [cardAnswer, setCardAnswer] = useState("");
@@ -40,6 +45,8 @@ export default function AddFlashCards() {
             setCardAnswer("");
             setSuccess("Flash Card added successfully!");
             setError("");
+            navigate("/flashcards");
+            
         } catch (error) {
             setError("Failed to add flashcard.");
         } finally {

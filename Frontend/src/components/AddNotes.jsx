@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addNote } from "../redux/noteSlice";
 import Navbar from "./common/Navbar";
+import { useNavigate } from "react-router-dom";
 
 export default function AddNotes() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { loading, error, successMessage } = useSelector((state) => state.notes);
 
@@ -41,6 +43,7 @@ export default function AddNotes() {
     setNoteName("");
     setNoteDescription("");
     setNoteCategory("");
+    navigate("/");
   };
 
   return (
