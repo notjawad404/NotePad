@@ -34,6 +34,7 @@ export default function NotePad() {
   return (
     <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white">
       <Navbar />
+      
       <h1 className="text-center text-4xl font-bold py-6">Notepad</h1>
 
       <div className="max-w-4xl mx-auto px-4">
