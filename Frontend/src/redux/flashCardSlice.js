@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL || "";
+
 const initialState = {
     flashcards: [],
     status: "idle",
@@ -13,7 +15,7 @@ export const fetchFlashCards = createAsyncThunk(
     "flashcards/fetchFlashCards",
     async (_, {rejectWithValue}) => {
         try{
-            const response = await axios.get("https://note-pad-beryl.vercel.app/flashcards");
+            const response = await axios.get(`${API_URL}/flashcards`);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || "Failed to fetch flashcards.");
@@ -26,7 +28,7 @@ export const addFlashCard = createAsyncThunk(
     "flashcards/addFlashCard",
     async (flashcardData, {rejectWithValue}) => {
         try {
-            const response = await axios.post("https://note-pad-beryl.vercel.app/flashcards", flashcardData, { headers: { "Content-Type": "application/json" } });
+            const response = await axios.post(`${API_URL}/flashcards`, flashcardData, { headers: { "Content-Type": "application/json" } });
             console.log(response.data);
             
             return response.data;
@@ -42,7 +44,7 @@ export const deleteFlashCard = createAsyncThunk(
     "flashcards/deleteFlashCard",
     async (id, {rejectWithValue}) => {
         try {
-            await axios.delete(`https://note-pad-beryl.vercel.app/flashcards/${id}`);
+            await axios.delete(`${API_URL}/flashcards/${id}`);
             return id;
         } catch (error) {
             return rejectWithValue(error.response?.data || "Failed to delete flashcard.");
