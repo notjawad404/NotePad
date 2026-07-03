@@ -2,14 +2,14 @@ const FlashCard = require('../models/FlashCard');
 
 exports.createFlashCard = async (req, res) => {
     try {
-        const { username, question, answer, date, color, bgColor } = req.body;
+        const { question, answer, date, color, bgColor } = req.body;
 
         if (!question || !answer || !date || !color || !bgColor) {
             return res.status(400).json({ message: 'All fields are required' });
         }
 
         const flashCard = new FlashCard({
-            username,
+            username: req.user.username,
             question,
             answer,
             date: new Date(date),
@@ -26,7 +26,7 @@ exports.createFlashCard = async (req, res) => {
 
 exports.getFlashCards = async (req, res) => {
     try {
-        const flashCards = await FlashCard.find();
+        const flashCards = await FlashCard.find({ username: req.user.username });
         res.status(200).json(flashCards);
     } catch (error) {
         res.status(500).json({ message: 'Error getting flashcards', error: error.message });
@@ -37,7 +37,7 @@ exports.deleteFlashCard = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const flashCard = await FlashCard.findByIdAndDelete(id);
+        const flashCard = await FlashCard.findOneAndDelete({ _id: id, username: req.user.username });
         if (!flashCard) {
             return res.status(404).json({ message: 'Flash Card not found' });
         }

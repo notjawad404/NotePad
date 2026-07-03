@@ -2,14 +2,14 @@ const Note = require('../models/Note');
 
 exports.createNote = async (req, res) => {
     try{
-        const { username, name, description, type, date, color, bgColor } = req.body;
+        const { name, description, type, date, color, bgColor } = req.body;
 
-        if(!username || !name || !description || !type || !date || !color || !bgColor){
+        if(!name || !description || !type || !date || !color || !bgColor){
             return res.status(400).json({ message: 'All fields are required' });
         }
 
         const note = new Note({
-            username,
+            username: req.user.username,
             name,
             description,
             type,
@@ -29,7 +29,7 @@ exports.createNote = async (req, res) => {
 
 exports.getNotes = async (req, res) => {
     try{
-        const notes = await Note.find();
+        const notes = await Note.find({ username: req.user.username });
         res.status(200).json(notes);
     }
     catch(error){
@@ -41,7 +41,7 @@ exports.getNotes = async (req, res) => {
 exports.getNoteById = async (req, res) => {
     try{
         const {id} = req.params;
-        const note = await Note.findById(id);
+        const note = await Note.findOne({ _id: id, username: req.user.username });
         if(!note) {
             return res.status(200).json({message: 'Note not found'});
         }
@@ -55,11 +55,11 @@ exports.getNoteById = async (req, res) => {
 exports.updateNote = async (req, res) => {
     try {
         const { id } = req.params;
-        const { username, name, description, type, date, color, bgColor } = req.body;
+        const { name, description, type, date, color, bgColor } = req.body;
 
-        const note = await Note.findByIdAndUpdate(
-            id,
-            { username, name, description, type, date: new Date(date), color, bgColor },
+        const note = await Note.findOneAndUpdate(
+            { _id: id, username: req.user.username },
+            { name, description, type, date: new Date(date), color, bgColor },
             { new: true }
         );
 
@@ -77,7 +77,7 @@ exports.deleteNote = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const note = await Note.findByIdAndDelete(id);
+        const note = await Note.findOneAndDelete({ _id: id, username: req.user.username });
         if (!note) {
             return res.status(404).json({ message: 'Note not found' });
         }

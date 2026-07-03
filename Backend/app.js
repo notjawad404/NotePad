@@ -3,8 +3,14 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 require('dotenv').config();
 
+const authRoutes = require('./routes/authRoutes');
 const noteRoutes = require('./routes/noteRoutes');
 const flashCardRoutes = require('./routes/flashCardRoutes');
+
+if (!process.env.JWT_SECRET) {
+    console.log('Error starting server: Missing JWT_SECRET environment variable.');
+    process.exit(1);
+}
 
 const app = express();
 
@@ -21,6 +27,7 @@ app.get('/', (req, res) => {
 });
 
 
+app.use('/auth', authRoutes);
 app.use('/notes', noteRoutes);
 app.use('/flashcards', flashCardRoutes);
 
