@@ -30,7 +30,6 @@ export default function AddNotes() {
     }
 
     const newNote = {
-      username: "user123",
       name: noteName,
       description: noteDescription,
       type: noteCategory,

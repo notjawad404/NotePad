@@ -1,7 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-
-const API_URL = import.meta.env.VITE_API_URL || "";
+import axiosInstance from "../api/axiosInstance";
 
 const initialState = {
   notes: [],
@@ -10,22 +8,22 @@ const initialState = {
   error: null,
 };
 
-// Fetch all notes
+// Fetch all notes for the logged-in user
 export const fetchNotes = createAsyncThunk("notes/fetchNotes", async () => {
-  const response = await axios.get(`${API_URL}/notes`);
-  return response.data.filter((note) => note.username === "user123");
+  const response = await axiosInstance.get("/notes");
+  return response.data;
 });
 
 // Fetch a single note by ID
 export const fetchNoteById = createAsyncThunk("notes/fetchNoteById", async (id) => {
-  const response = await axios.get(`${API_URL}/notes/${id}`);
+  const response = await axiosInstance.get(`/notes/${id}`);
   return response.data;
 });
 
 // Add a new note
 export const addNote = createAsyncThunk("notes/addNote", async (noteData, { rejectWithValue }) => {
   try {
-    const response = await axios.post(`${API_URL}/notes`, noteData);
+    const response = await axiosInstance.post("/notes", noteData);
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response.data || "Failed to add note.");
@@ -34,7 +32,7 @@ export const addNote = createAsyncThunk("notes/addNote", async (noteData, { reje
 
 // Delete a note
 export const deleteNote = createAsyncThunk("notes/deleteNote", async (id) => {
-  await axios.delete(`${API_URL}/notes/${id}`);
+  await axiosInstance.delete(`/notes/${id}`);
   return id;
 });
 
@@ -42,7 +40,7 @@ export const deleteNote = createAsyncThunk("notes/deleteNote", async (id) => {
 export const updateNote = createAsyncThunk(
   "notes/updateNote",
   async ({ id, data }) => {
-    const response = await axios.put(`${API_URL}/notes/${id}`, data);
+    const response = await axiosInstance.put(`/notes/${id}`, data);
     return response.data;
   }
 );

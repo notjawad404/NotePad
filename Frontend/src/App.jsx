@@ -5,26 +5,32 @@ import AddNotes from './components/AddNotes'
 import AddFlashCards from './components/FlashCards/AddFlashCards'
 import FlashCards from './components/FlashCards/FlashCards'
 import NoteDetail from './components/NoteDetail'
+import Login from './components/Auth/Login'
+import SignUp from './components/Auth/SignUp'
+import ProtectedRoute from './components/Auth/ProtectedRoute'
 
 
 function App() {
 
   return (
-   
+
    <div className="">
     <Router>
       <Routes>
-      
-        <Route path="/" element={<NotePad/>} />
-        <Route path="/addnotes" element={<AddNotes/>} />
-        <Route path="/note/:id" element={<NoteDetail/>} />
-        <Route path="/addflashcards" element={<AddFlashCards/>} />
-        <Route path="/flashcards" element={<FlashCards/>} />
+
+        <Route path="/login" element={<Login/>} />
+        <Route path="/signup" element={<SignUp/>} />
+
+        <Route path="/" element={<ProtectedRoute><NotePad/></ProtectedRoute>} />
+        <Route path="/addnotes" element={<ProtectedRoute><AddNotes/></ProtectedRoute>} />
+        <Route path="/note/:id" element={<ProtectedRoute><NoteDetail/></ProtectedRoute>} />
+        <Route path="/addflashcards" element={<ProtectedRoute><AddFlashCards/></ProtectedRoute>} />
+        <Route path="/flashcards" element={<ProtectedRoute><FlashCards/></ProtectedRoute>} />
 
       </Routes>
     </Router>
    </div>
-   
+
   )
 }
 

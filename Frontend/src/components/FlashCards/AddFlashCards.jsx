@@ -29,9 +29,8 @@ export default function AddFlashCards() {
         setError("");
         setSuccess("");
 
-        const newFlashCard = { 
-            username: "user123",
-            question: cardQuestion, 
+        const newFlashCard = {
+            question: cardQuestion,
             answer: cardAnswer,
             date: new Date().toISOString(), 
             bgColor, 

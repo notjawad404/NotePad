@@ -1,7 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-
-const API_URL = import.meta.env.VITE_API_URL || "";
+import axiosInstance from "../api/axiosInstance";
 
 const initialState = {
     flashcards: [],
@@ -15,7 +13,7 @@ export const fetchFlashCards = createAsyncThunk(
     "flashcards/fetchFlashCards",
     async (_, {rejectWithValue}) => {
         try{
-            const response = await axios.get(`${API_URL}/flashcards`);
+            const response = await axiosInstance.get("/flashcards");
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || "Failed to fetch flashcards.");
@@ -28,12 +26,9 @@ export const addFlashCard = createAsyncThunk(
     "flashcards/addFlashCard",
     async (flashcardData, {rejectWithValue}) => {
         try {
-            const response = await axios.post(`${API_URL}/flashcards`, flashcardData, { headers: { "Content-Type": "application/json" } });
-            console.log(response.data);
-            
+            const response = await axiosInstance.post("/flashcards", flashcardData);
             return response.data;
         } catch (error) {
-            console.log("Error = "+error);
             return rejectWithValue(error.response?.data || "Failed to add flashcard.");
         }
     }
@@ -44,7 +39,7 @@ export const deleteFlashCard = createAsyncThunk(
     "flashcards/deleteFlashCard",
     async (id, {rejectWithValue}) => {
         try {
-            await axios.delete(`${API_URL}/flashcards/${id}`);
+            await axiosInstance.delete(`/flashcards/${id}`);
             return id;
         } catch (error) {
             return rejectWithValue(error.response?.data || "Failed to delete flashcard.");
