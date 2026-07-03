@@ -2,78 +2,88 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../../redux/authSlice";
+import Layout from "../common/Layout";
+import { TextInput } from "../common/FormField";
+import Alert from "../common/Alert";
+import Spinner from "../common/Spinner";
+import logo from "../../assets/notepadLogo.jpeg";
 
 export default function SignUp() {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const { status, error } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { status, error } = useSelector((state) => state.auth);
+  const loading = status === "loading";
 
-    const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [formError, setFormError] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [formError, setFormError] = useState("");
 
-    const handleSignUp = async (e) => {
-        e.preventDefault();
-        setFormError("");
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    setFormError("");
 
-        if (!username || !email || !password) {
-            setFormError("Please fill in all fields.");
-            return;
-        }
+    if (!username || !email || !password) {
+      setFormError("Please fill in all fields.");
+      return;
+    }
 
-        const result = await dispatch(registerUser({ username, email, password }));
-        if (registerUser.fulfilled.match(result)) {
-            navigate("/");
-        }
-    };
+    const result = await dispatch(registerUser({ username, email, password }));
+    if (registerUser.fulfilled.match(result)) {
+      navigate("/");
+    }
+  };
 
-    return (
-        <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white flex items-center justify-center">
-            <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
-                <h1 className="text-center text-3xl font-bold mb-6">Sign Up</h1>
-                <form onSubmit={handleSignUp} className="space-y-4">
-                    <input
-                        type="text"
-                        placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        className="w-full p-3 bg-gray-700 rounded-lg text-gray-200 focus:outline-none focus:ring focus:ring-blue-500"
-                    />
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full p-3 bg-gray-700 rounded-lg text-gray-200 focus:outline-none focus:ring focus:ring-blue-500"
-                    />
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full p-3 bg-gray-700 rounded-lg text-gray-200 focus:outline-none focus:ring focus:ring-blue-500"
-                    />
-                    {(formError || error) && (
-                        <p className="text-red-500 bg-gray-900 p-3 rounded-lg">{formError || error}</p>
-                    )}
-                    <button
-                        type="submit"
-                        disabled={status === "loading"}
-                        className={`w-full py-3 bg-blue-500 text-lg font-bold rounded-lg hover:bg-blue-600 focus:outline-none ${
-                            status === "loading" ? "opacity-50 cursor-not-allowed" : ""
-                        }`}
-                    >
-                        {status === "loading" ? "Signing up..." : "Sign Up"}
-                    </button>
-                </form>
-                <p className="text-center text-gray-400 mt-4">
-                    Already have an account?{" "}
-                    <Link to="/login" className="text-blue-400 underline">
-                        Log In
-                    </Link>
-                </p>
-            </div>
+  return (
+    <Layout center>
+      <div className="bg-slate-900 border border-slate-800 p-8 rounded-xl w-full max-w-sm">
+        <div className="flex flex-col items-center mb-6">
+          <img src={logo} alt="NotePad logo" className="w-12 h-12 rounded-lg ring-1 ring-slate-700 object-cover mb-3" />
+          <h1 className="text-xl font-semibold text-slate-100">Create your account</h1>
+          <p className="text-sm text-slate-500 mt-1">Start capturing notes and flashcards</p>
         </div>
-    );
+        <form onSubmit={handleSignUp} className="space-y-4">
+          <TextInput
+            id="signup-username"
+            label="Username"
+            type="text"
+            placeholder="Your username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <TextInput
+            id="signup-email"
+            label="Email"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextInput
+            id="signup-password"
+            label="Password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Alert variant="error">{formError || error}</Alert>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2 py-3 bg-indigo-600 text-sm font-medium rounded-lg hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {loading && <Spinner className="w-4 h-4" />}
+            {loading ? "Signing up..." : "Sign Up"}
+          </button>
+        </form>
+        <p className="text-center text-sm text-slate-500 mt-6">
+          Already have an account?{" "}
+          <Link to="/login" className="text-indigo-400 hover:text-indigo-300 font-medium">
+            Log In
+          </Link>
+        </p>
+      </div>
+    </Layout>
+  );
 }

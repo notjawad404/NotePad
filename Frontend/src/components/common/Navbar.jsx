@@ -1,63 +1,99 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import logo from '../../assets/notepadLogo.jpeg';
+import logo from "../../assets/notepadLogo.jpeg";
 import { logout } from "../../redux/authSlice";
+import { MenuIcon, CloseIcon, LogoutIcon } from "./Icons";
+
+const links = [
+  { to: "/", label: "Notes", end: true },
+  { to: "/addnotes", label: "Add Note" },
+  { to: "/flashcards", label: "Flashcards" },
+  { to: "/addflashcards", label: "Add Flashcard" },
+];
 
 export default function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
     dispatch(logout());
     navigate("/login");
   };
 
+  const linkClasses = ({ isActive }) =>
+    `block md:inline-block text-sm font-medium px-3 py-2 rounded-lg transition-colors ${
+      isActive ? "bg-slate-800 text-white" : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/60"
+    }`;
+
   return (
-    <div className="bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 p-4 flex flex-wrap items-center">
-      <div className="flex items-center w-full md:w-1/2">
-        <img src={logo} alt="Logo" className="w-12 h-12 rounded-full shadow-md" />
-        <h1 className="text-white font-bold text-2xl px-4 tracking-wide">
-          NotePad
-        </h1>
-      </div>
-      <div className="flex justify-center md:justify-end items-center w-full md:w-1/2 space-x-6 mt-2 md:mt-0">
-        <Link
-          to="/"
-          className="text-white font-semibold text-lg hover:text-gray-200 transition duration-300"
-        >
-          Home
-        </Link>
-        <Link
-          to="/addnotes"
-          className="text-white font-semibold text-lg hover:text-gray-200 transition duration-300"
-        >
-          Add Notes
-        </Link>
-        <Link
-          to="/flashcards"
-          className="text-white font-semibold text-lg hover:text-gray-200 transition duration-300"
-        >
-          FlashCards
-        </Link>
-        <Link
-          to="/addflashcards"
-          className="text-white font-semibold text-lg hover:text-gray-200 transition duration-300"
-        >
-          Add FlashCards
-        </Link>
-        {user && (
-          <>
-            <span className="text-white font-semibold text-lg">{user.username}</span>
-            <button
-              onClick={handleLogout}
-              className="text-white font-semibold text-lg bg-black/20 px-3 py-1 rounded-lg hover:bg-black/30 transition duration-300"
-            >
-              Logout
-            </button>
-          </>
+    <header className="sticky top-0 z-30 bg-slate-950/90 backdrop-blur border-b border-slate-800">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          <NavLink to="/" className="flex items-center gap-3 shrink-0">
+            <img src={logo} alt="NotePad logo" className="w-8 h-8 rounded-lg ring-1 ring-slate-700 object-cover" />
+            <span className="text-slate-100 font-semibold text-lg tracking-tight">NotePad</span>
+          </NavLink>
+
+          <nav className="hidden md:flex items-center gap-1">
+            {links.map((link) => (
+              <NavLink key={link.to} to={link.to} end={link.end} className={linkClasses}>
+                {link.label}
+              </NavLink>
+            ))}
+          </nav>
+
+          <div className="hidden md:flex items-center gap-3">
+            {user && (
+              <>
+                <div className="flex items-center gap-2 text-slate-300 text-sm font-medium">
+                  <span className="w-7 h-7 rounded-full bg-slate-800 flex items-center justify-center text-xs uppercase text-slate-300">
+                    {user.username?.[0] ?? "?"}
+                  </span>
+                  {user.username}
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-1.5 text-slate-300 text-sm font-medium border border-slate-800 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors"
+                >
+                  <LogoutIcon className="w-4 h-4" />
+                  Logout
+                </button>
+              </>
+            )}
+          </div>
+
+          <button
+            className="md:hidden text-slate-300 p-2 -mr-2"
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <CloseIcon /> : <MenuIcon />}
+          </button>
+        </div>
+
+        {menuOpen && (
+          <nav className="md:hidden pb-4 flex flex-col gap-1">
+            {links.map((link) => (
+              <NavLink key={link.to} to={link.to} end={link.end} className={linkClasses} onClick={() => setMenuOpen(false)}>
+                {link.label}
+              </NavLink>
+            ))}
+            {user && (
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-1.5 text-slate-300 text-sm font-medium border border-slate-800 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors mt-2"
+              >
+                <LogoutIcon className="w-4 h-4" />
+                Logout ({user.username})
+              </button>
+            )}
+          </nav>
         )}
       </div>
-    </div>
+    </header>
   );
 }

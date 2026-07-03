@@ -1,58 +1,113 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchFlashCards, deleteFlashCard } from "../../redux/flashCardSlice.js";
 import Navbar from "../common/Navbar";
+import Layout from "../common/Layout";
+import Spinner from "../common/Spinner";
+import EmptyState from "../common/EmptyState";
+import Alert from "../common/Alert";
+import { PlusIcon, TrashIcon, CardsIcon } from "../common/Icons";
+import { Link } from "react-router-dom";
+import "./fcStyle.css";
 
 export default function FlashCards() {
   const dispatch = useDispatch();
   const { flashcards, status, error } = useSelector((state) => state.flashcards);
+  const [flippedIds, setFlippedIds] = useState(new Set());
 
   useEffect(() => {
     dispatch(fetchFlashCards());
   }, [dispatch]);
-  
 
-const handleDelete = (id) => {
-    dispatch(deleteFlashCard(id));
-};
+  const toggleFlip = (id) => {
+    setFlippedIds((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
 
-return (
-    <div className="h-screen overflow-y-auto bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white">
-        <Navbar />
-        <div className="flex justify-center flex-col mt-10">
-            <h1 className="text-center font-bold text-4xl mb-6">Flash Cards</h1>
-            {status === "loading" ? (
-                <div className="text-center text-xl">Loading...</div>
-            ) : error ? (
-                <div className="text-center text-red-500 text-xl">{error}</div>
-            ) : flashcards.length === 0 ? (
-                <div className="text-center text-xl">No flashcards found. Add some!</div>
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6">
-                    {flashcards.map((card, index) => (
-                        <div
-                            key={index}
-                            className={`group relative p-6 rounded-xl shadow-lg transform transition-transform hover:scale-105 ${card.bgColor} ${card.color}`}
-                        >
-                            <div className="relative h-40 flex justify-center items-center">
-                                <div className="absolute inset-0 flex items-center justify-center text-lg font-semibold transition-opacity duration-300 opacity-100 group-hover:opacity-0">
-                                    {card.question}
-                                </div>
-                                <div className="absolute inset-0 flex items-center justify-center text-lg font-semibold transition-opacity duration-300 opacity-0 group-hover:opacity-100">
-                                    {card.answer}
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => handleDelete(card._id)}
-                                className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded shadow-lg"
-                            >
-                                Delete
-                            </button>
-                        </div>
-                    ))}
-                </div>
-            )}
+  const handleDelete = (e, id) => {
+    e.stopPropagation();
+    if (window.confirm("Delete this flashcard? This can't be undone.")) {
+      dispatch(deleteFlashCard(id));
+    }
+  };
+
+  return (
+    <Layout>
+      <Navbar />
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-2xl font-semibold text-slate-100">Flashcards</h1>
+            <p className="text-sm text-slate-500 mt-1">Click a card to flip it.</p>
+          </div>
+          <Link
+            to="/addflashcards"
+            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors"
+          >
+            <PlusIcon className="w-4 h-4" />
+            Add Flashcard
+          </Link>
         </div>
-    </div>
-);
+
+        {status === "loading" ? (
+          <div className="flex justify-center py-20 text-slate-500">
+            <Spinner className="w-6 h-6" />
+          </div>
+        ) : error ? (
+          <Alert variant="error">{error}</Alert>
+        ) : flashcards.length === 0 ? (
+          <EmptyState
+            icon={CardsIcon}
+            title="No flashcards yet"
+            description="Add your first flashcard to start studying."
+            actionTo="/addflashcards"
+            actionLabel="Add Flashcard"
+          />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {flashcards.map((card) => {
+              const flipped = flippedIds.has(card._id);
+              return (
+                <div key={card._id} className="relative perspective-1000 h-44">
+                  <button
+                    onClick={(e) => handleDelete(e, card._id)}
+                    className="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/30 text-white/80 hover:text-red-400 hover:bg-black/50 transition-colors"
+                    aria-label="Delete flashcard"
+                  >
+                    <TrashIcon className="w-4 h-4" />
+                  </button>
+                  <div
+                    className="relative w-full h-full flip-card cursor-pointer transition-transform duration-500"
+                    style={{ transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)" }}
+                    onClick={() => toggleFlip(card._id)}
+                  >
+                    <div
+                      className={`absolute inset-0 backface-hidden rounded-xl p-5 flex flex-col items-center justify-center text-center gap-2 border border-black/5 ${card.bgColor} ${card.color}`}
+                    >
+                      <span className="text-[10px] uppercase tracking-wide opacity-60 absolute top-3 left-4">
+                        Question
+                      </span>
+                      <p className="font-medium">{card.question}</p>
+                    </div>
+                    <div
+                      className={`absolute inset-0 backface-hidden rounded-xl p-5 flex flex-col items-center justify-center text-center gap-2 border border-black/5 ${card.bgColor} ${card.color}`}
+                      style={{ transform: "rotateY(180deg)" }}
+                    >
+                      <span className="text-[10px] uppercase tracking-wide opacity-60 absolute top-3 left-4">
+                        Answer
+                      </span>
+                      <p className="font-medium">{card.answer}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </Layout>
+  );
 }

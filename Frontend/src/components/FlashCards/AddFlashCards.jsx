@@ -3,121 +3,101 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addFlashCard } from "../../redux/flashCardSlice";
 import Navbar from "../common/Navbar";
-
-
-
+import Layout from "../common/Layout";
+import { TextInput, TextArea } from "../common/FormField";
+import ColorPicker, { colorOptions } from "../common/ColorPicker";
+import Alert from "../common/Alert";
+import Spinner from "../common/Spinner";
 
 export default function AddFlashCards() {
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const [cardQuestion, setCardQuestion] = useState(""); 
-    const [cardAnswer, setCardAnswer] = useState("");
-    const [bgColor, setBgColor] = useState("bg-white");
-    const [color, setColor] = useState("text-black");
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [cardQuestion, setCardQuestion] = useState("");
+  const [cardAnswer, setCardAnswer] = useState("");
+  const [bgColor, setBgColor] = useState(colorOptions[0].bgColor);
+  const [color, setColor] = useState(colorOptions[0].color);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-    const handleAddCards = async () => {
-        if (!cardQuestion || !cardAnswer) {
-            setError("All fields are required.");
-            setSuccess("");
-            return;
-        }
+  const handleAddCards = async () => {
+    if (!cardQuestion || !cardAnswer) {
+      setError("All fields are required.");
+      setSuccess("");
+      return;
+    }
 
-        setLoading(true);
-        setError("");
-        setSuccess("");
+    setLoading(true);
+    setError("");
+    setSuccess("");
 
-        const newFlashCard = {
-            question: cardQuestion,
-            answer: cardAnswer,
-            date: new Date().toISOString(), 
-            bgColor, 
-            color 
-        };
-
-        try {
-            await dispatch(addFlashCard(newFlashCard));
-
-            setCardQuestion("");
-            setCardAnswer("");
-            setSuccess("Flash Card added successfully!");
-            setError("");
-            navigate("/flashcards");
-            
-        } catch (error) {
-            setError("Failed to add flashcard.");
-        } finally {
-            setLoading(false);
-        }
+    const newFlashCard = {
+      question: cardQuestion,
+      answer: cardAnswer,
+      date: new Date().toISOString(),
+      bgColor,
+      color,
     };
 
-    const colorOptions = [
-        { bgColor: "bg-white", color: "text-black" },
-        { bgColor: "bg-red-500", color: "text-white" },
-        { bgColor: "bg-green-500", color: "text-white" },
-        { bgColor: "bg-blue-500", color: "text-white" },
-        { bgColor: "bg-yellow-500", color: "text-black" }
-    ];
+    try {
+      await dispatch(addFlashCard(newFlashCard));
+      setCardQuestion("");
+      setCardAnswer("");
+      setSuccess("Flash Card added successfully!");
+      navigate("/flashcards");
+    } catch {
+      setError("Failed to add flashcard.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return (
-        <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white">
-            <Navbar />
-            <div className="max-w-4xl mx-auto px-4 py-8">
-                <h1 className="text-center text-4xl font-bold mb-8">Add Flash Card</h1>
-                <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-                    <div className="mb-4">
-                        <label htmlFor="cardQuestion" className="block text-lg font-medium mb-2">Card Question</label>
-                        <input 
-                            id="cardQuestion"
-                            type="text" 
-                            placeholder="Enter card question" 
-                            value={cardQuestion} 
-                            onChange={(e) => setCardQuestion(e.target.value)}
-                            className="w-full p-3 bg-gray-700 rounded-lg text-gray-200 focus:outline-none focus:ring focus:ring-blue-500"
-                        />
-                    </div>
+  return (
+    <Layout>
+      <Navbar />
+      <div className="max-w-2xl mx-auto px-4 py-10">
+        <h1 className="text-2xl font-semibold text-slate-100 mb-6">Add Flashcard</h1>
+        <div className="bg-slate-900 border border-slate-800 p-6 rounded-xl space-y-5">
+          <TextInput
+            id="cardQuestion"
+            label="Card Question"
+            type="text"
+            placeholder="Enter card question"
+            value={cardQuestion}
+            onChange={(e) => setCardQuestion(e.target.value)}
+          />
 
-                    <div className="mb-4">
-                        <label htmlFor="cardAnswer" className="block text-lg font-medium mb-2">Card Answer</label>
-                        <textarea 
-                            id="cardAnswer"
-                            placeholder="Enter card answer" 
-                            value={cardAnswer} 
-                            onChange={(e) => setCardAnswer(e.target.value)}
-                            className="w-full p-3 bg-gray-700 rounded-lg text-gray-200 focus:outline-none focus:ring focus:ring-blue-500"
-                            rows="4"
-                        />
-                    </div>
+          <TextArea
+            id="cardAnswer"
+            label="Card Answer"
+            placeholder="Enter card answer"
+            value={cardAnswer}
+            onChange={(e) => setCardAnswer(e.target.value)}
+            rows="4"
+          />
 
-                    <div className="mb-4">
-                        <label className="block text-lg font-medium mb-2">Choose Color</label>
-                        <div className="flex gap-3">
-                            {colorOptions.map((option, index) => (
-                                <button 
-                                    key={index}
-                                    onClick={() => { setBgColor(option.bgColor); setColor(option.color); }}
-                                    className={`w-10 h-10 rounded-full ${option.bgColor} ${option.color} focus:outline-none`}
-                                    aria-label={`Set background color to ${option.bgColor} and text color to ${option.color}`}
-                                />
-                            ))}
-                        </div>
-                    </div>
+          <ColorPicker
+            value={bgColor}
+            onChange={(option) => {
+              setBgColor(option.bgColor);
+              setColor(option.color);
+            }}
+          />
 
-                    {error && <p className="text-red-500 bg-gray-900 p-3 rounded-lg mb-4">{error}</p>}
-                    {success && <p className="text-green-500 bg-gray-900 p-3 rounded-lg mb-4">{success}</p>}
+          <Alert variant="error">{error}</Alert>
+          <Alert variant="success">{success}</Alert>
 
-                    <button 
-                        type="button" 
-                        onClick={handleAddCards} 
-                        className={`w-full py-3 bg-green-500 text-lg font-bold rounded-lg hover:bg-green-600 focus:outline-none ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
-                        disabled={loading}
-                    >
-                        {loading ? "Adding Flash Card..." : "Add Flash Card"}
-                    </button>
-                </div>
-            </div>
+          <button
+            type="button"
+            onClick={handleAddCards}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2 py-3 bg-indigo-600 text-sm font-medium rounded-lg hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {loading && <Spinner className="w-4 h-4" />}
+            {loading ? "Adding Flash Card..." : "Add Flash Card"}
+          </button>
         </div>
-    );
+      </div>
+    </Layout>
+  );
 }

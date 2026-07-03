@@ -2,11 +2,17 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { loginUser } from "../../redux/authSlice";
+import Layout from "../common/Layout";
+import { TextInput } from "../common/FormField";
+import Alert from "../common/Alert";
+import Spinner from "../common/Spinner";
+import logo from "../../assets/notepadLogo.jpeg";
 
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { status, error } = useSelector((state) => state.auth);
+  const loading = status === "loading";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,42 +28,47 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white flex items-center justify-center">
-      <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-center text-3xl font-bold mb-6">Log In</h1>
+    <Layout center>
+      <div className="bg-slate-900 border border-slate-800 p-8 rounded-xl w-full max-w-sm">
+        <div className="flex flex-col items-center mb-6">
+          <img src={logo} alt="NotePad logo" className="w-12 h-12 rounded-lg ring-1 ring-slate-700 object-cover mb-3" />
+          <h1 className="text-xl font-semibold text-slate-100">Welcome back</h1>
+          <p className="text-sm text-slate-500 mt-1">Log in to your NotePad account</p>
+        </div>
         <form onSubmit={handleLogin} className="space-y-4">
-          <input
+          <TextInput
+            id="login-email"
+            label="Email"
             type="email"
-            placeholder="Email"
+            placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 bg-gray-700 rounded-lg text-gray-200 focus:outline-none focus:ring focus:ring-blue-500"
           />
-          <input
+          <TextInput
+            id="login-password"
+            label="Password"
             type="password"
-            placeholder="Password"
+            placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 bg-gray-700 rounded-lg text-gray-200 focus:outline-none focus:ring focus:ring-blue-500"
           />
-          {error && <p className="text-red-500 bg-gray-900 p-3 rounded-lg">{error}</p>}
+          <Alert variant="error">{error}</Alert>
           <button
             type="submit"
-            disabled={status === "loading"}
-            className={`w-full py-3 bg-blue-500 text-lg font-bold rounded-lg hover:bg-blue-600 focus:outline-none ${
-              status === "loading" ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2 py-3 bg-indigo-600 text-sm font-medium rounded-lg hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {status === "loading" ? "Logging in..." : "Log In"}
+            {loading && <Spinner className="w-4 h-4" />}
+            {loading ? "Logging in..." : "Log In"}
           </button>
         </form>
-        <p className="text-center text-gray-400 mt-4">
+        <p className="text-center text-sm text-slate-500 mt-6">
           Don't have an account?{" "}
-          <Link to="/signup" className="text-blue-400 underline">
+          <Link to="/signup" className="text-indigo-400 hover:text-indigo-300 font-medium">
             Sign Up
           </Link>
         </p>
       </div>
-    </div>
+    </Layout>
   );
 }

@@ -2,13 +2,16 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchNoteById, updateNote, deleteNote } from "../redux/noteSlice.js";
+import Layout from "./common/Layout";
+import Spinner from "./common/Spinner";
+import { TextInput, TextArea } from "./common/FormField";
+import { ArrowLeftIcon, PencilIcon, TrashIcon } from "./common/Icons";
 
 export default function NoteDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
-  // Use selectedNote directly from state
+
   const note = useSelector((state) => state.notes.selectedNote);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
@@ -17,10 +20,9 @@ export default function NoteDetail() {
     type: "",
   });
 
-  // Fetch note if not already fetched
   useEffect(() => {
     if (!note || note._id !== id) {
-      dispatch(fetchNoteById(id)); // Fetch by ID if not present
+      dispatch(fetchNoteById(id));
     } else {
       setFormData({
         name: note.name,
@@ -36,97 +38,101 @@ export default function NoteDetail() {
   };
 
   const handleSave = () => {
-    // Dispatch the update action with new formData
     dispatch(updateNote({ id, data: formData }));
     setEditMode(false);
-    // Optional: Sync the local form data with the updated note
-    setFormData({
-      name: formData.name,
-      description: formData.description,
-      type: formData.type,
-    });
   };
 
   const handleDelete = () => {
-    dispatch(deleteNote(id));
-    navigate("/");
+    if (window.confirm(`Delete "${note.name}"? This can't be undone.`)) {
+      dispatch(deleteNote(id));
+      navigate("/");
+    }
   };
 
-  // If note is still loading, show loading indicator
   if (!note || note._id !== id) {
     return (
-      <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white flex items-center justify-center">
-        <div>Loading...</div>
-      </div>
+      <Layout center>
+        <Spinner className="w-6 h-6 text-slate-500" />
+      </Layout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white">
-      <div className="max-w-4xl mx-auto p-6">
+    <Layout>
+      <div className="max-w-2xl mx-auto p-6">
         <button
-          className="text-blue-400 underline mb-4"
+          className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-100 transition-colors mb-4"
           onClick={() => navigate("/")}
         >
+          <ArrowLeftIcon className="w-4 h-4" />
           Back to Notes
         </button>
-        <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+
+        <div className="bg-slate-900 border border-slate-800 p-6 rounded-xl">
           {editMode ? (
-            <>
-              <input
-                type="text"
+            <div className="space-y-5">
+              <TextInput
+                id="edit-name"
+                label="Title"
                 name="name"
                 value={formData.name}
                 onChange={handleEditChange}
-                className="w-full p-3 bg-gray-700 rounded-lg mb-4"
                 placeholder="Title"
               />
-              <textarea
+              <TextArea
+                id="edit-description"
+                label="Description"
                 name="description"
                 value={formData.description}
                 onChange={handleEditChange}
-                className="w-full p-3 bg-gray-700 rounded-lg mb-4"
                 placeholder="Description"
-              ></textarea>
-              <input
-                type="text"
+                rows="6"
+              />
+              <TextInput
+                id="edit-type"
+                label="Category"
                 name="type"
                 value={formData.type}
                 onChange={handleEditChange}
-                className="w-full p-3 bg-gray-700 rounded-lg mb-4"
                 placeholder="Category"
               />
-              <div className="flex gap-4">
+              <div className="flex gap-3">
                 <button
-                  className="bg-green-600 px-4 py-2 rounded-lg"
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-medium transition-colors"
                   onClick={handleSave}
                 >
                   Save
                 </button>
                 <button
-                  className="bg-gray-600 px-4 py-2 rounded-lg"
+                  className="px-4 py-2 border border-slate-700 hover:bg-slate-800 rounded-lg text-sm font-medium transition-colors"
                   onClick={() => setEditMode(false)}
                 >
                   Cancel
                 </button>
               </div>
-            </>
+            </div>
           ) : (
             <>
-              <h1 className="text-3xl font-bold mb-4">{note.name}</h1>
-              <p className="text-lg mb-4">{note.description}</p>
-              <p className="text-sm text-gray-400">Category: {note.type}</p>
-              <div className="flex gap-4 mt-6">
+              <div className="flex items-start justify-between gap-4 mb-4">
+                <h1 className="text-2xl font-semibold text-slate-100">{note.name}</h1>
+                <span className={`text-xs font-medium px-2.5 py-1 rounded-full shrink-0 ${note.bgColor} ${note.color}`}>
+                  {note.type}
+                </span>
+              </div>
+              <p className="text-slate-300 whitespace-pre-wrap leading-relaxed mb-6">{note.description}</p>
+              <div className="flex gap-3">
                 <button
-                  className="bg-blue-600 px-4 py-2 rounded-lg"
+                  className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-medium transition-colors"
                   onClick={() => setEditMode(true)}
                 >
+                  <PencilIcon className="w-4 h-4" />
                   Edit
                 </button>
                 <button
-                  className="bg-red-600 px-4 py-2 rounded-lg"
+                  className="flex items-center gap-1.5 px-4 py-2 border border-red-500/30 text-red-400 hover:bg-red-500/10 rounded-lg text-sm font-medium transition-colors"
                   onClick={handleDelete}
                 >
+                  <TrashIcon className="w-4 h-4" />
                   Delete
                 </button>
               </div>
@@ -134,6 +140,6 @@ export default function NoteDetail() {
           )}
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }
