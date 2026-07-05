@@ -6,6 +6,7 @@ require('dotenv').config();
 const authRoutes = require('./routes/authRoutes');
 const noteRoutes = require('./routes/noteRoutes');
 const flashCardRoutes = require('./routes/flashCardRoutes');
+const groupRoutes = require('./routes/groupRoutes');
 
 if (!process.env.JWT_SECRET) {
     console.log('Error starting server: Missing JWT_SECRET environment variable.');
@@ -30,5 +31,6 @@ app.get('/', (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/notes', noteRoutes);
 app.use('/flashcards', flashCardRoutes);
+app.use('/groups', groupRoutes);
 
 module.exports = app;

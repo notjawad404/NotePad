@@ -1,11 +1,19 @@
 const Note = require('../models/Note');
+const Group = require('../models/Group');
 
 exports.createNote = async (req, res) => {
     try{
-        const { name, description, type, date, color, bgColor } = req.body;
+        const { name, description, type, date, color, bgColor, groupId } = req.body;
 
         if(!name || !description || !type || !date || !color || !bgColor){
             return res.status(400).json({ message: 'All fields are required' });
+        }
+
+        if (groupId) {
+            const group = await Group.findOne({ _id: groupId, username: req.user.username });
+            if (!group) {
+                return res.status(400).json({ message: 'Invalid group' });
+            }
         }
 
         const note = new Note({
@@ -15,7 +23,8 @@ exports.createNote = async (req, res) => {
             type,
             date: new Date(date),
             color,
-            bgColor
+            bgColor,
+            groupId: groupId || null,
         });
 
         await note.save();
@@ -85,5 +94,33 @@ exports.deleteNote = async (req, res) => {
         res.status(200).json({ message: 'Note deleted successfully' });
     } catch (error) {
         res.status(200).json({ message: 'Error deleting note', error: error.message });
+    }
+};
+
+exports.updateNoteGroup = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { groupId } = req.body;
+
+        if (groupId) {
+            const group = await Group.findOne({ _id: groupId, username: req.user.username });
+            if (!group) {
+                return res.status(400).json({ message: 'Invalid group' });
+            }
+        }
+
+        const note = await Note.findOneAndUpdate(
+            { _id: id, username: req.user.username },
+            { groupId: groupId || null },
+            { new: true }
+        );
+
+        if (!note) {
+            return res.status(404).json({ message: 'Note not found' });
+        }
+
+        res.status(200).json(note);
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating note group', error: error.message });
     }
 };
