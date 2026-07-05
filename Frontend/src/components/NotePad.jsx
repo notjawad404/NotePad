@@ -7,7 +7,7 @@ import Layout from './common/Layout';
 import Spinner from './common/Spinner';
 import EmptyState from './common/EmptyState';
 import { SearchIcon, TrashIcon, PlusIcon, NoteIcon } from './common/Icons';
-import { colorOptions } from './common/ColorPicker';
+import { colorOptions } from './common/colorOptions';
 
 export default function NotePad() {
   const dispatch = useDispatch();

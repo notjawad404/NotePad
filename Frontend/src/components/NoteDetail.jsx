@@ -23,18 +23,21 @@ export default function NoteDetail() {
   useEffect(() => {
     if (!note || note._id !== id) {
       dispatch(fetchNoteById(id));
-    } else {
-      setFormData({
-        name: note.name,
-        description: note.description,
-        type: note.type,
-      });
     }
   }, [note, id, dispatch]);
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleStartEdit = () => {
+    setFormData({
+      name: note.name,
+      description: note.description,
+      type: note.type,
+    });
+    setEditMode(true);
   };
 
   const handleSave = () => {
@@ -123,7 +126,7 @@ export default function NoteDetail() {
               <div className="flex gap-3">
                 <button
                   className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-medium transition-colors"
-                  onClick={() => setEditMode(true)}
+                  onClick={handleStartEdit}
                 >
                   <PencilIcon className="w-4 h-4" />
                   Edit

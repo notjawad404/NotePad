@@ -5,7 +5,8 @@ import { addFlashCard } from "../../redux/flashCardSlice";
 import Navbar from "../common/Navbar";
 import Layout from "../common/Layout";
 import { TextInput, TextArea } from "../common/FormField";
-import ColorPicker, { colorOptions } from "../common/ColorPicker";
+import ColorPicker from "../common/ColorPicker";
+import { colorOptions } from "../common/colorOptions";
 import Alert from "../common/Alert";
 import Spinner from "../common/Spinner";
 
