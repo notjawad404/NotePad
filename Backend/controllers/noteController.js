@@ -5,10 +5,6 @@ exports.createNote = async (req, res) => {
     try{
         const { name, description, type, date, color, bgColor, groupId } = req.body;
 
-        if(!name || !description || !type || !date || !color || !bgColor){
-            return res.status(400).json({ message: 'All fields are required' });
-        }
-
         if (groupId) {
             const group = await Group.findOne({ _id: groupId, username: req.user.username });
             if (!group) {
@@ -65,10 +61,6 @@ exports.updateNote = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, description, type, date, color, bgColor } = req.body;
-
-        if(!name || !description || !type || !date || !color || !bgColor){
-            return res.status(400).json({ message: 'All fields are required' });
-        }
 
         const note = await Note.findOneAndUpdate(
             { _id: id, username: req.user.username },
