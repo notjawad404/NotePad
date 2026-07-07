@@ -4,6 +4,8 @@ import axiosInstance from "../api/axiosInstance";
 const initialState = {
   notes: [],
   selectedNote: null, // For storing a single selected note when viewing by ID
+  selectedNoteStatus: "idle",
+  selectedNoteError: null,
   status: "idle",
   error: null,
 };
@@ -15,10 +17,17 @@ export const fetchNotes = createAsyncThunk("notes/fetchNotes", async () => {
 });
 
 // Fetch a single note by ID
-export const fetchNoteById = createAsyncThunk("notes/fetchNoteById", async (id) => {
-  const response = await axiosInstance.get(`/notes/${id}`);
-  return response.data;
-});
+export const fetchNoteById = createAsyncThunk(
+  "notes/fetchNoteById",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`/notes/${id}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch note.");
+    }
+  }
+);
 
 // Add a new note
 export const addNote = createAsyncThunk("notes/addNote", async (noteData, { rejectWithValue }) => {
@@ -39,9 +48,13 @@ export const deleteNote = createAsyncThunk("notes/deleteNote", async (id) => {
 // Update a note
 export const updateNote = createAsyncThunk(
   "notes/updateNote",
-  async ({ id, data }) => {
-    const response = await axiosInstance.put(`/notes/${id}`, data);
-    return response.data;
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.put(`/notes/${id}`, data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to update note.");
+    }
   }
 );
 
@@ -65,8 +78,18 @@ const noteSlice = createSlice({
       })
       
       // Fetch note by ID
+      .addCase(fetchNoteById.pending, (state) => {
+        state.selectedNoteStatus = "loading";
+        state.selectedNoteError = null;
+      })
       .addCase(fetchNoteById.fulfilled, (state, action) => {
+        state.selectedNoteStatus = "succeeded";
         state.selectedNote = action.payload;
+      })
+      .addCase(fetchNoteById.rejected, (state, action) => {
+        state.selectedNoteStatus = "failed";
+        state.selectedNoteError = action.payload || "Failed to fetch note.";
+        state.selectedNote = null;
       })
 
       // Add a note
@@ -99,6 +122,9 @@ const noteSlice = createSlice({
         if (state.selectedNote && state.selectedNote._id === action.payload._id) {
           state.selectedNote = action.payload;
         }
+      })
+      .addCase(updateNote.rejected, (state, action) => {
+        state.error = action.payload || "Failed to update note.";
       });
   },
 });

@@ -16,7 +16,19 @@ if (!process.env.JWT_SECRET) {
 const app = express();
 
 // Middleware
-app.use(cors());
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        callback(new Error('Not allowed by CORS'));
+    },
+}));
 app.use(express.json());
 
 // Connect to database

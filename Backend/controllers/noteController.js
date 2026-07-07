@@ -32,7 +32,7 @@ exports.createNote = async (req, res) => {
     }
     catch(error){
         console.error('Error saving note:', error);
-        res.status(200).json({ message: 'Error saving note', error: error.message });
+        res.status(500).json({ message: 'Error saving note', error: error.message });
     }
 };
 
@@ -43,7 +43,7 @@ exports.getNotes = async (req, res) => {
     }
     catch(error){
         console.error('Error getting notes:', error);
-        res.status(200).json({ message: 'Error getting notes', error: error.message });
+        res.status(500).json({ message: 'Error getting notes', error: error.message });
     }
 };
 
@@ -52,12 +52,12 @@ exports.getNoteById = async (req, res) => {
         const {id} = req.params;
         const note = await Note.findOne({ _id: id, username: req.user.username });
         if(!note) {
-            return res.status(200).json({message: 'Note not found'});
+            return res.status(404).json({message: 'Note not found'});
         }
         res.status(200).json(note);
     }
     catch(error){
-        res.status(200).json({ message: 'Error getting note', error: error.message });
+        res.status(500).json({ message: 'Error getting note', error: error.message });
     }
 }
 
@@ -66,10 +66,14 @@ exports.updateNote = async (req, res) => {
         const { id } = req.params;
         const { name, description, type, date, color, bgColor } = req.body;
 
+        if(!name || !description || !type || !date || !color || !bgColor){
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
         const note = await Note.findOneAndUpdate(
             { _id: id, username: req.user.username },
             { name, description, type, date: new Date(date), color, bgColor },
-            { new: true }
+            { new: true, runValidators: true }
         );
 
         if (!note) {
@@ -78,7 +82,7 @@ exports.updateNote = async (req, res) => {
 
         res.status(200).json(note);
     } catch (error) {
-        res.status(200).json({ message: 'Error updating note', error: error.message });
+        res.status(500).json({ message: 'Error updating note', error: error.message });
     }
 };
 
@@ -93,7 +97,7 @@ exports.deleteNote = async (req, res) => {
 
         res.status(200).json({ message: 'Note deleted successfully' });
     } catch (error) {
-        res.status(200).json({ message: 'Error deleting note', error: error.message });
+        res.status(500).json({ message: 'Error deleting note', error: error.message });
     }
 };
 

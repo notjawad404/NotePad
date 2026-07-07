@@ -13,18 +13,22 @@ export default function NoteDetail() {
   const dispatch = useDispatch();
 
   const note = useSelector((state) => state.notes.selectedNote);
+  const noteStatus = useSelector((state) => state.notes.selectedNoteStatus);
+  const noteError = useSelector((state) => state.notes.selectedNoteError);
   const [editMode, setEditMode] = useState(false);
+  const [saveError, setSaveError] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     type: "",
+    date: "",
+    color: "",
+    bgColor: "",
   });
 
   useEffect(() => {
-    if (!note || note._id !== id) {
-      dispatch(fetchNoteById(id));
-    }
-  }, [note, id, dispatch]);
+    dispatch(fetchNoteById(id));
+  }, [id, dispatch]);
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
@@ -36,13 +40,21 @@ export default function NoteDetail() {
       name: note.name,
       description: note.description,
       type: note.type,
+      date: note.date,
+      color: note.color,
+      bgColor: note.bgColor,
     });
+    setSaveError(null);
     setEditMode(true);
   };
 
-  const handleSave = () => {
-    dispatch(updateNote({ id, data: formData }));
-    setEditMode(false);
+  const handleSave = async () => {
+    try {
+      await dispatch(updateNote({ id, data: formData })).unwrap();
+      setEditMode(false);
+    } catch (error) {
+      setSaveError(error || "Failed to update note.");
+    }
   };
 
   const handleDelete = () => {
@@ -51,6 +63,14 @@ export default function NoteDetail() {
       navigate("/");
     }
   };
+
+  if (noteStatus === "failed" && (!note || note._id !== id)) {
+    return (
+      <Layout center>
+        <p className="text-slate-400 text-sm">{noteError || "Note not found."}</p>
+      </Layout>
+    );
+  }
 
   if (!note || note._id !== id) {
     return (
@@ -99,6 +119,9 @@ export default function NoteDetail() {
                 onChange={handleEditChange}
                 placeholder="Category"
               />
+              {saveError && (
+                <p className="text-red-400 text-sm">{saveError}</p>
+              )}
               <div className="flex gap-3">
                 <button
                   className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-medium transition-colors"
