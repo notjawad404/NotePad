@@ -34,6 +34,30 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+export const updateProfile = createAsyncThunk(
+  "auth/updateProfile",
+  async ({ username, email }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.put("/auth/me", { username, email });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to update profile.");
+    }
+  }
+);
+
+export const changePassword = createAsyncThunk(
+  "auth/changePassword",
+  async ({ currentPassword, newPassword }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.put("/auth/password", { currentPassword, newPassword });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to update password.");
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -74,6 +98,19 @@ const authSlice = createSlice({
         localStorage.setItem("user", JSON.stringify(action.payload.user));
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(updateProfile.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.user = action.payload.user;
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

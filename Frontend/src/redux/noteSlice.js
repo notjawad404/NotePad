@@ -105,7 +105,7 @@ const noteSlice = createSlice({
       })
       .addCase(addNote.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.payload || "Failed to add note.";
+        state.error = action.payload?.message || action.payload || "Failed to add note.";
       })
       // Delete note
       .addCase(deleteNote.fulfilled, (state, action) => {

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { loginUser } from "../../redux/authSlice";
 import Layout from "../common/Layout";
-import { TextInput } from "../common/FormField";
+import { TextInput, PasswordInput } from "../common/FormField";
 import Alert from "../common/Alert";
 import Spinner from "../common/Spinner";
 import logo from "../../assets/notepadLogo.jpeg";
@@ -44,10 +44,9 @@ export default function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <TextInput
+          <PasswordInput
             id="login-password"
             label="Password"
-            type="password"
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

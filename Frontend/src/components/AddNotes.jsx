@@ -23,7 +23,7 @@ export default function AddNotes() {
   const [color, setColor] = useState(colorOptions[0].color);
   const [formError, setFormError] = useState("");
 
-  const handleAddNote = () => {
+  const handleAddNote = async () => {
     if (!noteName || !noteDescription || !noteCategory) {
       setFormError("All fields are required!");
       return;
@@ -39,11 +39,13 @@ export default function AddNotes() {
       bgColor,
     };
 
-    dispatch(addNote(newNote));
-    setNoteName("");
-    setNoteDescription("");
-    setNoteCategory("");
-    navigate("/");
+    const result = await dispatch(addNote(newNote));
+    if (addNote.fulfilled.match(result)) {
+      setNoteName("");
+      setNoteDescription("");
+      setNoteCategory("");
+      navigate("/");
+    }
   };
 
   return (

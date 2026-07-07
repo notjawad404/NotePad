@@ -40,17 +40,16 @@ export default function AddFlashCards() {
       color,
     };
 
-    try {
-      await dispatch(addFlashCard(newFlashCard));
+    const result = await dispatch(addFlashCard(newFlashCard));
+    if (addFlashCard.fulfilled.match(result)) {
       setCardQuestion("");
       setCardAnswer("");
       setSuccess("Flash Card added successfully!");
       navigate("/flashcards");
-    } catch {
-      setError("Failed to add flashcard.");
-    } finally {
-      setLoading(false);
+    } else {
+      setError(result.payload?.message || result.payload || "Failed to add flashcard.");
     }
+    setLoading(false);
   };
 
   return (

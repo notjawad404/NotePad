@@ -48,12 +48,15 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             {user && (
               <>
-                <div className="flex items-center gap-2 text-slate-300 text-sm font-medium">
+                <NavLink
+                  to="/profile"
+                  className="flex items-center gap-2 text-slate-300 text-sm font-medium hover:text-slate-100 transition-colors"
+                >
                   <span className="w-7 h-7 rounded-full bg-slate-800 flex items-center justify-center text-xs uppercase text-slate-300">
                     {user.username?.[0] ?? "?"}
                   </span>
                   {user.username}
-                </div>
+                </NavLink>
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-1.5 text-slate-300 text-sm font-medium border border-slate-800 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors"
@@ -83,13 +86,22 @@ export default function Navbar() {
               </NavLink>
             ))}
             {user && (
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-1.5 text-slate-300 text-sm font-medium border border-slate-800 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors mt-2"
-              >
-                <LogoutIcon className="w-4 h-4" />
-                Logout ({user.username})
-              </button>
+              <>
+                <NavLink
+                  to="/profile"
+                  className={linkClasses}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Profile ({user.username})
+                </NavLink>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-1.5 text-slate-300 text-sm font-medium border border-slate-800 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors mt-2"
+                >
+                  <LogoutIcon className="w-4 h-4" />
+                  Logout
+                </button>
+              </>
             )}
           </nav>
         )}

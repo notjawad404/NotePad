@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../../redux/authSlice";
 import Layout from "../common/Layout";
-import { TextInput } from "../common/FormField";
+import { TextInput, PasswordInput } from "../common/FormField";
 import Alert from "../common/Alert";
 import Spinner from "../common/Spinner";
 import logo from "../../assets/notepadLogo.jpeg";
@@ -17,14 +17,20 @@ export default function SignUp() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [formError, setFormError] = useState("");
 
   const handleSignUp = async (e) => {
     e.preventDefault();
     setFormError("");
 
-    if (!username || !email || !password) {
+    if (!username || !email || !password || !confirmPassword) {
       setFormError("Please fill in all fields.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setFormError("Passwords do not match.");
       return;
     }
 
@@ -59,13 +65,19 @@ export default function SignUp() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <TextInput
+          <PasswordInput
             id="signup-password"
             label="Password"
-            type="password"
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+          />
+          <PasswordInput
+            id="signup-confirm-password"
+            label="Confirm Password"
+            placeholder="••••••••"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
           <Alert variant="error">{formError || error}</Alert>
           <button
