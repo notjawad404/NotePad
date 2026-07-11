@@ -24,6 +24,7 @@ export default function AddNotes() {
 
   const [noteName, setNoteName] = useState("");
   const [noteDescription, setNoteDescription] = useState("");
+  const [noteDescriptionDoc, setNoteDescriptionDoc] = useState(null);
   const [noteCategory, setNoteCategory] = useState("");
   // Preselect a group when arriving from a group page (/addnotes?group=<id>).
   const [groupId, setGroupId] = useState(searchParams.get("group") || "");
@@ -45,6 +46,7 @@ export default function AddNotes() {
     const newNote = {
       name: noteName,
       description: noteDescription,
+      descriptionDoc: noteDescriptionDoc,
       type: noteCategory,
       date: new Date().toISOString(),
       color,
@@ -56,6 +58,7 @@ export default function AddNotes() {
     if (addNote.fulfilled.match(result)) {
       setNoteName("");
       setNoteDescription("");
+      setNoteDescriptionDoc(null);
       setNoteCategory("");
       setGroupId("");
       navigate("/");
@@ -104,7 +107,10 @@ export default function AddNotes() {
             <Label htmlFor="noteDescription">Note Description</Label>
             <RichTextEditor
               value={noteDescription}
-              onChange={setNoteDescription}
+              onChange={(html, json) => {
+                setNoteDescription(html);
+                setNoteDescriptionDoc(json);
+              }}
               placeholder="Write your note — format text, add headings, lists, links…"
             />
           </div>

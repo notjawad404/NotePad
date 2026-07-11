@@ -72,7 +72,8 @@ export default function RichTextEditor({ value, onChange, placeholder }) {
   const editor = useEditor({
     extensions: buildExtensions(placeholder),
     content: normalizeContent(value),
-    onUpdate: ({ editor }) => onChange(editor.getHTML()),
+    // Emit both the rendered HTML and the structured document (ProseMirror JSON).
+    onUpdate: ({ editor }) => onChange(editor.getHTML(), editor.getJSON()),
     editorProps: { attributes: { class: "rich-text-input" } },
   });
 

@@ -56,8 +56,10 @@ export default function NoteDetail() {
 
   const setField = (name, value) => setEdits((prev) => ({ ...prev, [name]: value }));
 
-  const handleDescriptionChange = (html) => {
-    if (readyRef.current) setEdits((prev) => ({ ...prev, description: html }));
+  const handleDescriptionChange = (html, json) => {
+    if (readyRef.current) {
+      setEdits((prev) => ({ ...prev, description: html, descriptionDoc: json }));
+    }
   };
 
   const handleGroupChange = (e) => {
@@ -68,6 +70,7 @@ export default function NoteDetail() {
     const name = ("name" in edits ? edits.name : note.name).trim();
     const type = ("type" in edits ? edits.type : note.type).trim();
     const description = "description" in edits ? edits.description : note.description;
+    const descriptionDoc = "descriptionDoc" in edits ? edits.descriptionDoc : note.descriptionDoc;
 
     if (!name || !type || isRichTextEmpty(description)) {
       setSaveError("Title, category, and description are required.");
@@ -79,7 +82,7 @@ export default function NoteDetail() {
       await dispatch(
         updateNote({
           id,
-          data: { name, type, description, date: note.date, color: note.color, bgColor: note.bgColor },
+          data: { name, type, description, descriptionDoc, date: note.date, color: note.color, bgColor: note.bgColor },
         })
       ).unwrap();
       setEdits({});

@@ -3,7 +3,7 @@ const Group = require('../models/Group');
 
 exports.createNote = async (req, res) => {
     try{
-        const { name, description, type, date, color, bgColor, groupId } = req.body;
+        const { name, description, descriptionDoc, type, date, color, bgColor, groupId } = req.body;
 
         if (groupId) {
             const group = await Group.findOne({ _id: groupId, username: req.user.username });
@@ -16,6 +16,7 @@ exports.createNote = async (req, res) => {
             username: req.user.username,
             name,
             description,
+            descriptionDoc: descriptionDoc || null,
             type,
             date: new Date(date),
             color,
@@ -70,11 +71,11 @@ exports.getNoteById = async (req, res) => {
 exports.updateNote = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, description, type, date, color, bgColor } = req.body;
+        const { name, description, descriptionDoc, type, date, color, bgColor } = req.body;
 
         const note = await Note.findOneAndUpdate(
             { _id: id, username: req.user.username },
-            { name, description, type, date: new Date(date), color, bgColor },
+            { name, description, descriptionDoc: descriptionDoc || null, type, date: new Date(date), color, bgColor },
             { new: true, runValidators: true }
         );
 

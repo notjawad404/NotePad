@@ -29,7 +29,8 @@ app.use(cors({
         callback(new Error('Not allowed by CORS'));
     },
 }));
-app.use(express.json());
+// Larger limit so rich-text notes (HTML + structured document) fit.
+app.use(express.json({ limit: '2mb' }));
 
 // Connect to database
 connectDB();
