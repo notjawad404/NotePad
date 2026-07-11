@@ -186,3 +186,124 @@ export function ChevronRightIcon({ className = base }) {
     </svg>
   );
 }
+
+/* ---- Rich text toolbar icons ---- */
+
+export function UndoIcon({ className = base }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <path d="M9 14 4 9l5-5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M4 9h11a5 5 0 0 1 0 10h-3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function RedoIcon({ className = base }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <path d="m15 14 5-5-5-5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M20 9H9a5 5 0 0 0 0 10h3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function AlignLeftIcon({ className = base }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <path d="M4 6h16M4 12h10M4 18h13" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function AlignCenterIcon({ className = base }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <path d="M4 6h16M7 12h10M6 18h12" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function AlignRightIcon({ className = base }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <path d="M4 6h16M10 12h10M7 18h13" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function AlignJustifyIcon({ className = base }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function ListBulletIcon({ className = base }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <path d="M9 6h11M9 12h11M9 18h11" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="4.5" cy="6" r="1.2" fill="currentColor" stroke="none" />
+      <circle cx="4.5" cy="12" r="1.2" fill="currentColor" stroke="none" />
+      <circle cx="4.5" cy="18" r="1.2" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function ListOrderedIcon({ className = base }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <path d="M10 6h10M10 12h10M10 18h10" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M4 4v3M3 7h2M3 11h2l-2 3h2M3 17h1.5a.9.9 0 0 1 0 1.8H3.2M4.7 18.8a.9.9 0 0 1 0 1.8H3" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function QuoteIcon({ className = base }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <path d="M7 7c-2 0-3 1.5-3 3.5S5 14 7 14c0 2-1 3-3 3M17 7c-2 0-3 1.5-3 3.5S15 14 17 14c0 2-1 3-3 3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function CodeBlockIcon({ className = base }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <path d="m9 9-3 3 3 3M15 9l3 3-3 3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function LinkIcon({ className = base }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function UnlinkIcon({ className = base }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <path d="M17 8l2-2a5 5 0 0 0-7-.9M7 16l-2 2a5 5 0 0 0 7 .9M8 8l8 8M4 4l16 16" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function HighlightIcon({ className = base }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <path d="m9 11 4 4M4 20l2-6 8-8 4 4-8 8-6 2Z" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function ClearFormatIcon({ className = base }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <path d="M8 6h12M10 6l-2 12M6 20h6M18 15l4 4M22 15l-4 4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}

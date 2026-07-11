@@ -10,7 +10,7 @@ router.use(protect);
 
 const noteValidation = [
     body('name').trim().notEmpty().withMessage('Name is required').isLength({ max: 200 }).withMessage('Name is too long'),
-    body('description').trim().notEmpty().withMessage('Description is required').isLength({ max: 5000 }).withMessage('Description is too long'),
+    body('description').trim().notEmpty().withMessage('Description is required').isLength({ max: 100000 }).withMessage('Description is too long'),
     body('type').trim().notEmpty().withMessage('Type is required').isLength({ max: 50 }).withMessage('Type is too long'),
     body('date').notEmpty().withMessage('Date is required').isISO8601().withMessage('Date must be a valid date'),
     body('color').trim().notEmpty().withMessage('Color is required'),

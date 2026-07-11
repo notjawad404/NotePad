@@ -4,11 +4,13 @@ import { addNote } from "../redux/noteSlice";
 import { fetchGroups } from "../redux/groupSlice";
 import Navbar from "./common/Navbar";
 import Layout from "./common/Layout";
-import { TextInput, TextArea, Select } from "./common/FormField";
+import { TextInput, Select, Label } from "./common/FormField";
 import ColorPicker from "./common/ColorPicker";
 import { colorOptions } from "./common/colorOptions";
 import Alert from "./common/Alert";
 import Spinner from "./common/Spinner";
+import RichTextEditor from "./common/RichTextEditor";
+import { isRichTextEmpty } from "./common/richTextUtils";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function AddNotes() {
@@ -34,7 +36,7 @@ export default function AddNotes() {
   }, [dispatch]);
 
   const handleAddNote = async () => {
-    if (!noteName || !noteDescription || !noteCategory) {
+    if (!noteName || isRichTextEmpty(noteDescription) || !noteCategory) {
       setFormError("All fields are required!");
       return;
     }
@@ -98,14 +100,14 @@ export default function AddNotes() {
             ))}
           </Select>
 
-          <TextArea
-            id="noteDescription"
-            label="Note Description"
-            value={noteDescription}
-            onChange={(e) => setNoteDescription(e.target.value)}
-            placeholder="Enter note description"
-            rows="4"
-          />
+          <div>
+            <Label htmlFor="noteDescription">Note Description</Label>
+            <RichTextEditor
+              value={noteDescription}
+              onChange={setNoteDescription}
+              placeholder="Write your note — format text, add headings, lists, links…"
+            />
+          </div>
 
           <ColorPicker
             value={bgColor}
