@@ -52,3 +52,14 @@ export function TextArea({ id, label, ...props }) {
     </div>
   );
 }
+
+export function Select({ id, label, children, ...props }) {
+  return (
+    <div>
+      {label && <Label htmlFor={id}>{label}</Label>}
+      <select id={id} className={`${fieldClasses} appearance-none cursor-pointer`} {...props}>
+        {children}
+      </select>
+    </div>
+  );
+}

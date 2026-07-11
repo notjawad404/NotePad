@@ -1,31 +1,45 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchNotes, deleteNote } from '../redux/noteSlice';
+import { fetchGroups } from '../redux/groupSlice';
 import { Link } from 'react-router-dom';
 import Navbar from './common/Navbar';
 import Layout from './common/Layout';
 import Spinner from './common/Spinner';
 import EmptyState from './common/EmptyState';
-import { SearchIcon, TrashIcon, PlusIcon, NoteIcon } from './common/Icons';
+import NoteCard from './common/NoteCard';
+import { SearchIcon, PlusIcon, NoteIcon } from './common/Icons';
 import { colorOptions } from './common/colorOptions';
 
 export default function NotePad() {
   const dispatch = useDispatch();
   const { notes, status } = useSelector((state) => state.notes);
+  const groups = useSelector((state) => state.groups.groups);
+  const activeGroups = groups.filter((group) => !group.archived);
+  const groupMap = Object.fromEntries(groups.map((group) => [group._id, group.name]));
 
   const [searchName, setSearchName] = useState('');
   const [searchCategory, setSearchCategory] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
+  const [selectedGroup, setSelectedGroup] = useState('all');
 
   useEffect(() => {
     dispatch(fetchNotes());
+    dispatch(fetchGroups());
   }, [dispatch]);
+
+  const matchesGroup = (note) => {
+    if (selectedGroup === 'all') return true;
+    if (selectedGroup === 'ungrouped') return !note.groupId;
+    return note.groupId === selectedGroup;
+  };
 
   const filteredNotes = notes.filter(
     (note) =>
       note.name.toLowerCase().includes(searchName.toLowerCase()) &&
       note.type.toLowerCase().includes(searchCategory.toLowerCase()) &&
-      (selectedColor ? note.bgColor === selectedColor : true)
+      (selectedColor ? note.bgColor === selectedColor : true) &&
+      matchesGroup(note)
   );
 
   const handleDelete = (id, name) => {
@@ -99,6 +113,36 @@ export default function NotePad() {
           ))}
         </div>
 
+        {activeGroups.length > 0 && (
+          <div className="flex items-center gap-2 flex-wrap mb-8">
+            <span className="text-xs text-slate-500 mr-1">Group:</span>
+            {[
+              { key: 'all', label: 'All' },
+              { key: 'ungrouped', label: 'Ungrouped' },
+              ...activeGroups.map((group) => ({ key: group._id, label: group.name })),
+            ].map((chip) => (
+              <button
+                key={chip.key}
+                onClick={() => setSelectedGroup(chip.key)}
+                aria-pressed={selectedGroup === chip.key}
+                className={`text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
+                  selectedGroup === chip.key
+                    ? 'bg-indigo-600 border-indigo-600 text-white'
+                    : 'border-slate-800 text-slate-400 hover:border-slate-600'
+                }`}
+              >
+                {chip.label}
+              </button>
+            ))}
+            <Link
+              to="/groups"
+              className="text-xs font-medium text-slate-500 hover:text-slate-300 underline underline-offset-2 ml-1"
+            >
+              Manage
+            </Link>
+          </div>
+        )}
+
         {status === 'loading' ? (
           <div className="flex justify-center py-20 text-slate-500">
             <Spinner className="w-6 h-6" />
@@ -118,34 +162,12 @@ export default function NotePad() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredNotes.map((note) => (
-              <div
+              <NoteCard
                 key={note._id}
-                className={`${note.bgColor} ${note.color} p-5 rounded-xl flex flex-col justify-between border border-black/5 transition-transform hover:-translate-y-0.5`}
-              >
-                <div>
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <h3 className="font-semibold leading-snug">{note.name}</h3>
-                    <button
-                      className="opacity-50 hover:opacity-100 hover:text-red-400 transition-opacity shrink-0"
-                      onClick={() => handleDelete(note._id, note.name)}
-                      aria-label={`Delete ${note.name}`}
-                    >
-                      <TrashIcon className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <p className="text-sm opacity-70 line-clamp-3 mb-4">
-                    {note.description.split('\n')[0]}
-                  </p>
-                </div>
-                <div className="flex items-center justify-between mt-2">
-                  <span className="text-xs font-medium px-2 py-1 rounded-full bg-black/20">
-                    {note.type}
-                  </span>
-                  <Link to={`/note/${note._id}`} className="text-sm font-medium underline underline-offset-2 opacity-90 hover:opacity-100">
-                    Show More
-                  </Link>
-                </div>
-              </div>
+                note={note}
+                groupName={groupMap[note.groupId]}
+                onDelete={(n) => handleDelete(n._id, n.name)}
+              />
             ))}
           </div>
         )}

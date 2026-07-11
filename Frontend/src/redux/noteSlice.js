@@ -58,6 +58,19 @@ export const updateNote = createAsyncThunk(
   }
 );
 
+// Move a note to a group (or unassign it with groupId = null)
+export const updateNoteGroup = createAsyncThunk(
+  "notes/updateNoteGroup",
+  async ({ id, groupId }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.patch(`/notes/${id}/group`, { groupId });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to move note.");
+    }
+  }
+);
+
 const noteSlice = createSlice({
   name: "notes",
   initialState,
@@ -125,6 +138,20 @@ const noteSlice = createSlice({
       })
       .addCase(updateNote.rejected, (state, action) => {
         state.error = action.payload || "Failed to update note.";
+      })
+
+      // Move note to a group
+      .addCase(updateNoteGroup.fulfilled, (state, action) => {
+        const index = state.notes.findIndex((note) => note._id === action.payload._id);
+        if (index !== -1) {
+          state.notes[index] = action.payload;
+        }
+        if (state.selectedNote && state.selectedNote._id === action.payload._id) {
+          state.selectedNote = action.payload;
+        }
+      })
+      .addCase(updateNoteGroup.rejected, (state, action) => {
+        state.error = action.payload || "Failed to move note.";
       });
   },
 });

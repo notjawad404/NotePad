@@ -5,6 +5,8 @@ import AddNotes from './components/AddNotes'
 import AddFlashCards from './components/FlashCards/AddFlashCards'
 import FlashCards from './components/FlashCards/FlashCards'
 import NoteDetail from './components/NoteDetail'
+import Groups from './components/Groups/Groups'
+import GroupDetail from './components/Groups/GroupDetail'
 import Profile from './components/Profile'
 import Login from './components/Auth/Login'
 import SignUp from './components/Auth/SignUp'
@@ -22,9 +24,12 @@ function App() {
         <Route path="/login" element={<Login/>} />
         <Route path="/signup" element={<SignUp/>} />
 
+        
         <Route path="/" element={<ProtectedRoute><NotePad/></ProtectedRoute>} />
         <Route path="/addnotes" element={<ProtectedRoute><AddNotes/></ProtectedRoute>} />
         <Route path="/note/:id" element={<ProtectedRoute><NoteDetail/></ProtectedRoute>} />
+        <Route path="/groups" element={<ProtectedRoute><Groups/></ProtectedRoute>} />
+        <Route path="/groups/:id" element={<ProtectedRoute><GroupDetail/></ProtectedRoute>} />
         <Route path="/addflashcards" element={<ProtectedRoute><AddFlashCards/></ProtectedRoute>} />
         <Route path="/flashcards" element={<ProtectedRoute><FlashCards/></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile/></ProtectedRoute>} />

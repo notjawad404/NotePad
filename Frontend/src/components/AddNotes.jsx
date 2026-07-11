@@ -1,27 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addNote } from "../redux/noteSlice";
+import { fetchGroups } from "../redux/groupSlice";
 import Navbar from "./common/Navbar";
 import Layout from "./common/Layout";
-import { TextInput, TextArea } from "./common/FormField";
+import { TextInput, TextArea, Select } from "./common/FormField";
 import ColorPicker from "./common/ColorPicker";
 import { colorOptions } from "./common/colorOptions";
 import Alert from "./common/Alert";
 import Spinner from "./common/Spinner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function AddNotes() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
   const { status, error, successMessage } = useSelector((state) => state.notes);
+  const groups = useSelector((state) => state.groups.groups);
+  const activeGroups = groups.filter((group) => !group.archived);
   const loading = status === "loading";
 
   const [noteName, setNoteName] = useState("");
   const [noteDescription, setNoteDescription] = useState("");
   const [noteCategory, setNoteCategory] = useState("");
+  // Preselect a group when arriving from a group page (/addnotes?group=<id>).
+  const [groupId, setGroupId] = useState(searchParams.get("group") || "");
   const [bgColor, setBgColor] = useState(colorOptions[0].bgColor);
   const [color, setColor] = useState(colorOptions[0].color);
   const [formError, setFormError] = useState("");
+
+  useEffect(() => {
+    dispatch(fetchGroups());
+  }, [dispatch]);
 
   const handleAddNote = async () => {
     if (!noteName || !noteDescription || !noteCategory) {
@@ -37,6 +47,7 @@ export default function AddNotes() {
       date: new Date().toISOString(),
       color,
       bgColor,
+      groupId: groupId || null,
     };
 
     const result = await dispatch(addNote(newNote));
@@ -44,6 +55,7 @@ export default function AddNotes() {
       setNoteName("");
       setNoteDescription("");
       setNoteCategory("");
+      setGroupId("");
       navigate("/");
     }
   };
@@ -71,6 +83,20 @@ export default function AddNotes() {
             onChange={(e) => setNoteCategory(e.target.value)}
             placeholder="Enter note category"
           />
+
+          <Select
+            id="noteGroup"
+            label="Group (optional)"
+            value={groupId}
+            onChange={(e) => setGroupId(e.target.value)}
+          >
+            <option value="">No group</option>
+            {activeGroups.map((group) => (
+              <option key={group._id} value={group._id}>
+                {group.name}
+              </option>
+            ))}
+          </Select>
 
           <TextArea
             id="noteDescription"

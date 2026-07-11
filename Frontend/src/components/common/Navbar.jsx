@@ -8,6 +8,7 @@ import { MenuIcon, CloseIcon, LogoutIcon } from "./Icons";
 const links = [
   { to: "/", label: "Notes", end: true },
   { to: "/addnotes", label: "Add Note" },
+  { to: "/groups", label: "Groups" },
   { to: "/flashcards", label: "Flashcards" },
   { to: "/addflashcards", label: "Add Flashcard" },
 ];

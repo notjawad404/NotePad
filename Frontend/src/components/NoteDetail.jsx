@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchNoteById, updateNote, deleteNote } from "../redux/noteSlice.js";
+import { fetchNoteById, updateNote, deleteNote, updateNoteGroup } from "../redux/noteSlice.js";
+import { fetchGroups } from "../redux/groupSlice";
 import Layout from "./common/Layout";
 import Spinner from "./common/Spinner";
-import { TextInput, TextArea } from "./common/FormField";
+import { TextInput, TextArea, Select } from "./common/FormField";
 import { ArrowLeftIcon, PencilIcon, TrashIcon } from "./common/Icons";
 
 export default function NoteDetail() {
@@ -15,6 +16,7 @@ export default function NoteDetail() {
   const note = useSelector((state) => state.notes.selectedNote);
   const noteStatus = useSelector((state) => state.notes.selectedNoteStatus);
   const noteError = useSelector((state) => state.notes.selectedNoteError);
+  const groups = useSelector((state) => state.groups.groups);
   const [editMode, setEditMode] = useState(false);
   const [saveError, setSaveError] = useState(null);
   const [formData, setFormData] = useState({
@@ -28,7 +30,13 @@ export default function NoteDetail() {
 
   useEffect(() => {
     dispatch(fetchNoteById(id));
+    dispatch(fetchGroups());
   }, [id, dispatch]);
+
+  const handleGroupChange = (e) => {
+    const value = e.target.value;
+    dispatch(updateNoteGroup({ id, groupId: value || null }));
+  };
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
@@ -146,6 +154,22 @@ export default function NoteDetail() {
                 </span>
               </div>
               <p className="text-slate-300 whitespace-pre-wrap leading-relaxed mb-6">{note.description}</p>
+              <div className="mb-6 max-w-xs">
+                <Select
+                  id="note-group"
+                  label="Group"
+                  value={note.groupId || ""}
+                  onChange={handleGroupChange}
+                >
+                  <option value="">Ungrouped</option>
+                  {groups.map((group) => (
+                    <option key={group._id} value={group._id}>
+                      {group.name}
+                      {group.archived ? " (archived)" : ""}
+                    </option>
+                  ))}
+                </Select>
+              </div>
               <div className="flex gap-3">
                 <button
                   className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-medium transition-colors"
