@@ -36,7 +36,7 @@ connectDB();
 
 // Routes
 app.get('/', (req, res) => {
-    res.send('Connected to backend server (watch test)');
+    res.send('Connected to backend server (watch test 2)');
 });
 
 

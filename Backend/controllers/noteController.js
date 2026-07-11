@@ -34,7 +34,16 @@ exports.createNote = async (req, res) => {
 
 exports.getNotes = async (req, res) => {
     try{
-        const notes = await Note.find({ username: req.user.username });
+        const { groupId, unassigned } = req.query;
+
+        const filter = { username: req.user.username };
+        if (unassigned === true || unassigned === 'true') {
+            filter.groupId = null;
+        } else if (groupId) {
+            filter.groupId = groupId;
+        }
+
+        const notes = await Note.find(filter);
         res.status(200).json(notes);
     }
     catch(error){
@@ -53,6 +62,7 @@ exports.getNoteById = async (req, res) => {
         res.status(200).json(note);
     }
     catch(error){
+        console.error('Error getting note:', error);
         res.status(500).json({ message: 'Error getting note', error: error.message });
     }
 }
@@ -74,6 +84,7 @@ exports.updateNote = async (req, res) => {
 
         res.status(200).json(note);
     } catch (error) {
+        console.error('Error updating note:', error);
         res.status(500).json({ message: 'Error updating note', error: error.message });
     }
 };
@@ -89,6 +100,7 @@ exports.deleteNote = async (req, res) => {
 
         res.status(200).json({ message: 'Note deleted successfully' });
     } catch (error) {
+        console.error('Error deleting note:', error);
         res.status(500).json({ message: 'Error deleting note', error: error.message });
     }
 };
@@ -117,6 +129,7 @@ exports.updateNoteGroup = async (req, res) => {
 
         res.status(200).json(note);
     } catch (error) {
+        console.error('Error updating note group:', error);
         res.status(500).json({ message: 'Error updating note group', error: error.message });
     }
 };

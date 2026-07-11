@@ -7,6 +7,6 @@ const FlashCardSchema = new mongoose.Schema({
     date: { type: Date, required: true },
     color: { type: String, required: true },
     bgColor: { type: String, required: true },
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('FlashCard', FlashCardSchema);

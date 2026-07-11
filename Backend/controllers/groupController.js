@@ -5,13 +5,9 @@ exports.createGroup = async (req, res) => {
     try {
         const { name } = req.body;
 
-        if (!name || !name.trim()) {
-            return res.status(400).json({ message: 'Group name is required' });
-        }
-
         const group = new Group({
             username: req.user.username,
-            name: name.trim(),
+            name,
         });
 
         await group.save();
@@ -37,13 +33,9 @@ exports.renameGroup = async (req, res) => {
         const { id } = req.params;
         const { name } = req.body;
 
-        if (!name || !name.trim()) {
-            return res.status(400).json({ message: 'Group name is required' });
-        }
-
         const group = await Group.findOneAndUpdate(
             { _id: id, username: req.user.username },
-            { name: name.trim() },
+            { name },
             { new: true }
         );
 
@@ -62,10 +54,6 @@ exports.setGroupArchived = async (req, res) => {
     try {
         const { id } = req.params;
         const { archived } = req.body;
-
-        if (typeof archived !== 'boolean') {
-            return res.status(400).json({ message: 'archived must be a boolean' });
-        }
 
         const group = await Group.findOneAndUpdate(
             { _id: id, username: req.user.username },

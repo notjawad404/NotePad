@@ -9,6 +9,6 @@ const NotesSchema = new mongoose.Schema({
     color: { type: String, required: true },
     bgColor: { type: String, required: true },
     groupId: { type: mongoose.Schema.Types.ObjectId, ref: 'Group', default: null },
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Notes', NotesSchema);
